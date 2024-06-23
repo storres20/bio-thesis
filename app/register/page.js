@@ -1,12 +1,10 @@
 'use client'
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
 const RegisterPage = () => {
-    const router = useRouter();
     const { register } = useAuth();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');

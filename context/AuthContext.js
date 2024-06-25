@@ -15,8 +15,18 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    const login = (email, password) => {
-        if (email === 'user@example.com' && password === 'password') {
+    const login = async (email, password) => {
+        const response = await fetch('http://localhost:3001/api/v1/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (data.status === 1) {
             setCookie(null, 'auth-token', 'authenticated', { maxAge: 30 * 24 * 60 * 60, path: '/' });
             setIsAuthenticated(true);
             router.push('/');

@@ -35,8 +35,20 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = (username, email, password) => {
-        // Add real registration logic here
+    const register = async (profile, email, password) => {
+        const response = await fetch('http://localhost:3001/api/v1/users/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ profile, email, password }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to register');
+        }
+
+        const data = await response.json();
         setCookie(null, 'auth-token', 'authenticated', { maxAge: 30 * 24 * 60 * 60, path: '/' });
         setIsAuthenticated(true);
         router.push('/');

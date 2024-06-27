@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 
 const RegisterPage = () => {
     const { register } = useAuth();
-    const [username, setUsername] = useState('');
+    const [profile, setProfile] = useState('health');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -16,7 +16,7 @@ const RegisterPage = () => {
         setError('');
 
         try {
-            register(username, email, password);
+            await register(profile, email, password);
         } catch (err) {
             setError('An error occurred');
         }
@@ -28,14 +28,16 @@ const RegisterPage = () => {
                 <h2 className="text-2xl mb-6 text-center">Register</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <label className="block text-gray-700">Username:</label>
-                        <input
-                            type="text"
+                        <label className="block text-gray-700">Profile:</label>
+                        <select
                             className="w-full px-3 py-2 border rounded"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            value={profile}
+                            onChange={(e) => setProfile(e.target.value)}
                             required
-                        />
+                        >
+                            <option value="health">health</option>
+                            <option value="engineer">engineer</option>
+                        </select>
                     </div>
                     <div className="mb-4">
                         <label className="block text-gray-700">Email:</label>

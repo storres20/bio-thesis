@@ -1,3 +1,4 @@
+// context/AuthContext.js
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { setCookie, parseCookies, destroyCookie } from 'nookies';
@@ -12,6 +13,8 @@ export const AuthProvider = ({ children }) => {
         const cookies = parseCookies();
         if (cookies['auth-token']) {
             setIsAuthenticated(true);
+        } else {
+            setIsAuthenticated(false);
         }
     }, []);
 
@@ -29,7 +32,7 @@ export const AuthProvider = ({ children }) => {
         if (data.status === 1) {
             setCookie(null, 'auth-token', 'authenticated', { maxAge: 30 * 24 * 60 * 60, path: '/' });
             setIsAuthenticated(true);
-            router.push('/');
+            router.push('/'); // Redirect to inventory page after login
         } else {
             throw new Error('Invalid email or password');
         }
@@ -51,7 +54,7 @@ export const AuthProvider = ({ children }) => {
         const data = await response.json();
         setCookie(null, 'auth-token', 'authenticated', { maxAge: 30 * 24 * 60 * 60, path: '/' });
         setIsAuthenticated(true);
-        router.push('/');
+        router.push('/'); // Redirect to inventory page after registration
     };
 
     const logout = () => {

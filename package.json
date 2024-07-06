@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "datatables.net": "^2.0.8",
+    "datatables.net-dt": "^2.0.8",
+    "jquery": "^3.7.1",
     "next": "14.2.4",
     "nookies": "^2.5.2",
     "react": "^18",

@@ -4,7 +4,16 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
+/* DataTable */
+import $ from 'jquery';
+import 'datatables.net-dt/css/dataTables.dataTables.css';
+import 'datatables.net';
+/************************/
+
 const InventoryPage = () => {
+    /* add new item*/
+    const [modalOpen, setModalOpen] = useState(false);
+
     const [items, setItems] = useState([]);
     const [name, setName] = useState('');
     const [brand, setBrand] = useState('');
@@ -13,8 +22,20 @@ const InventoryPage = () => {
     const [location, setLocation] = useState('');
     const [codepat, setCodepat] = useState('');
 
-    const [modalOpen, setModalOpen] = useState(false);
+    /* edit item */
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [editItemId, setEditItemId] = useState(null);
+    const [editName, setEditName] = useState('');
+    const [editBrand, setEditBrand] = useState('');
+    const [editModel, setEditModel] = useState('');
+    const [editSerie, setEditSerie] = useState('');
+    const [editLocation, setEditLocation] = useState('');
+    const [editCodepat, setEditCodepat] = useState('');
 
+    /* DataTable useState*/
+    const [dataLoaded, setDataLoaded] = useState(false);
+
+    /* authentication */
     const { isAuthenticated } = useAuth();
     const router = useRouter();
 
@@ -29,6 +50,7 @@ const InventoryPage = () => {
             .catch(error => console.error('Error fetching items:', error));
     };
 
+    /* ADD ITEM function */
     const addItem = (e) => {
         e.preventDefault()
         fetch('http://localhost:3001/api/v1/inventories/create', {
@@ -52,6 +74,16 @@ const InventoryPage = () => {
             .catch(error => console.error('Error adding item:', error));
     };
 
+    /* open and close modal for ADD ITEM*/
+    const closeModal = () => {
+        setModalOpen(false);
+    }
+
+    const openModal = () => {
+        setModalOpen(true);
+    }
+    /* ******* */
+
     const deleteItem = (id) => {
         fetch(`http://localhost:3001/api/v1/inventories/${id}`, {
             method: 'DELETE',
@@ -62,28 +94,73 @@ const InventoryPage = () => {
             .catch(error => console.error('Error deleting item:', error));
     };
 
-    const closeModal = () => {
-        setModalOpen(false);
+    /* EDIT ITEM function */
+    const editItem = (item) => {
+        openEditModal(item);
+    };
+
+    const updateItem = (e) => {
+        e.preventDefault()
+        fetch(`http://localhost:3001/api/v1/inventories/${editItemId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: editName, brand: editBrand, model: editModel, serie: editSerie, location: editLocation, codepat: editCodepat }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                setItems(items.map(item =>
+                    item._id === editItemId ? data : item
+                ));
+                closeEditModal()
+            })
+            .catch(error => console.error('Error updating item:', error));
+    };
+
+    /* open and close modal for EDIT ITEM */
+    const openEditModal = (item) => {
+        setEditItemId(item._id);
+        setEditName(item.name);
+        setEditBrand(item.brand);
+        setEditModel(item.model);
+        setEditSerie(item.serie);
+        setEditLocation(item.location);
+        setEditCodepat(item.codepat);
+        setEditModalOpen(true);
     }
 
-    const openModal = () => {
-        setModalOpen(true);
+    const closeEditModal = () => {
+        setEditModalOpen(false);
     }
+    /* ********* */
+
+    /* DataTable useEffect */
+    useEffect(() => {
+        if (items.length > 0 && !dataLoaded) {
+            // Initialize DataTable
+            $('#example').DataTable();
+            setDataLoaded(true);
+        }
+    }, [items, dataLoaded]);
 
     return (
         <div className="p-8">
             <h1 className="text-2xl mb-6">Inventory</h1>
             <button onClick={openModal} className="bg-blue-500 text-white p-2 rounded">Add Item</button>
+
+            {/* ADD ITEM modal */}
             {modalOpen && (
-                <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-70">
+                <div
+                    className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-70 z-50">
                     <div className="p-8 bg-white rounded-lg shadow-lg m-4 sm:m-8 lg:w-1/2">
-                        <button onClick={closeModal} className="float-right text-gray-500 hover:text-gray-700">✖️</button>
+                        <button onClick={closeModal} className="float-right text-gray-500 hover:text-gray-700">✖️
+                        </button>
                         <form onSubmit={addItem}>
                             <div className="mb-4">
                                 <label className="block text-gray-700">Item Name</label>
                                 <input
                                     type="text"
-                                    placeholder="Item Name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     className="w-full px-3 py-2 border rounded"
@@ -94,7 +171,6 @@ const InventoryPage = () => {
                                 <label className="block text-gray-700">Item Brand</label>
                                 <input
                                     type="text"
-                                    placeholder="Item Brand"
                                     value={brand}
                                     onChange={(e) => setBrand(e.target.value)}
                                     className="w-full px-3 py-2 border rounded"
@@ -105,7 +181,6 @@ const InventoryPage = () => {
                                 <label className="block text-gray-700">Item Model</label>
                                 <input
                                     type="text"
-                                    placeholder="Item Model"
                                     value={model}
                                     onChange={(e) => setModel(e.target.value)}
                                     className="w-full px-3 py-2 border rounded"
@@ -116,7 +191,6 @@ const InventoryPage = () => {
                                 <label className="block text-gray-700">Item Serie</label>
                                 <input
                                     type="text"
-                                    placeholder="Item Serie"
                                     value={serie}
                                     onChange={(e) => setSerie(e.target.value)}
                                     className="w-full px-3 py-2 border rounded"
@@ -127,7 +201,6 @@ const InventoryPage = () => {
                                 <label className="block text-gray-700">Item Location</label>
                                 <input
                                     type="text"
-                                    placeholder="Item Location"
                                     value={location}
                                     onChange={(e) => setLocation(e.target.value)}
                                     className="w-full px-3 py-2 border rounded"
@@ -138,29 +211,139 @@ const InventoryPage = () => {
                                 <label className="block text-gray-700">Item Codepat</label>
                                 <input
                                     type="text"
-                                    placeholder="Item Codepat"
                                     value={codepat}
                                     onChange={(e) => setCodepat(e.target.value)}
                                     className="w-full px-3 py-2 border rounded"
                                     required
                                 />
                             </div>
-                            <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Add Item</button>
+                            <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Add Item
+                            </button>
                         </form>
                     </div>
                 </div>
             )}
+            {/******************/}
 
-            <ul>
-                {items.map(item => (
-                    <li key={item._id} className="mb-2 flex justify-between items-center">
-                        {item.name} - {item.brand} - {item.model} - {item.serie} - {item.location} - {item.codepat}
-                        <button onClick={() => deleteItem(item._id)}
-                                className="bg-red-500 text-white p-2 rounded">Delete
+            {/* EDIT ITEM modal */}
+            {editModalOpen && (
+                <div
+                    className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-70 z-50">
+                    <div className="p-8 bg-white rounded-lg shadow-lg m-4 sm:m-8 lg:w-1/2">
+                        <button onClick={closeEditModal} className="float-right text-gray-500 hover:text-gray-700">✖️
                         </button>
-                    </li>
-                ))}
-            </ul>
+                        <form onSubmit={updateItem}>
+                            <div className="mb-4">
+                                <label className="block text-gray-700">Item Name</label>
+                                <input
+                                    type="text"
+                                    value={editName}
+                                    onChange={(e) => setEditName(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-700">Item Brand</label>
+                                <input
+                                    type="text"
+                                    value={editBrand}
+                                    onChange={(e) => setEditBrand(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-700">Item Model</label>
+                                <input
+                                    type="text"
+                                    value={editModel}
+                                    onChange={(e) => setEditModel(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-700">Item Serie</label>
+                                <input
+                                    type="text"
+                                    value={editSerie}
+                                    onChange={(e) => setEditSerie(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-700">Item Location</label>
+                                <input
+                                    type="text"
+                                    value={editLocation}
+                                    onChange={(e) => setEditLocation(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-700">Item Codepat</label>
+                                <input
+                                    type="text"
+                                    value={editCodepat}
+                                    onChange={(e) => setEditCodepat(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+
+                            <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Update
+                                Item
+                            </button>
+
+                        </form>
+                    </div>
+                </div>
+            )}
+            {/******************/}
+
+            {/* DataTable*/}
+            <div className="overflow-x-auto">
+                <table id="example" className="display">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>Serie</th>
+                        <th>Location</th>
+                        <th>Codepat</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {items.map(item => (
+                        <tr key={item._id}>
+                            <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{item.brand}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{item.model}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{item.serie}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{item.location}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{item.codepat}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button onClick={() => viewItem(item._id)}
+                                        className="text-indigo-600 hover:text-indigo-900 m-1">View
+                                </button>
+                                <button onClick={() => editItem(item)}
+                                        className="text-indigo-600 hover:text-indigo-900 m-1">Edit
+                                </button>
+                                <button onClick={() => deleteItem(item._id)}
+                                        className="text-red-600 hover:text-red-900 m-1">Delete
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     );
 };

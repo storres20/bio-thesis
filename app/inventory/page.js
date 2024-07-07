@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
 
 /* DataTable */
 import $ from 'jquery';
@@ -35,8 +34,6 @@ const InventoryPage = () => {
     /* DataTable useState*/
     const [dataLoaded, setDataLoaded] = useState(false);
 
-    /* authentication */
-    const { isAuthenticated } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
@@ -46,9 +43,19 @@ const InventoryPage = () => {
     const fetchItems = () => {
         fetch('http://localhost:3001/api/v1/inventories')
             .then(response => response.json())
-            .then(data => setItems(data))
+            .then(data => {
+                let filteredData = data.filter(item => item.show === "1");
+                setItems(filteredData)
+            })
             .catch(error => console.error('Error fetching items:', error));
     };
+
+    /* VIEW ITEM function */
+    const viewItem = (id) => {
+        router.push(`/inventory/${id}`);
+    };
+    /**********************/
+
 
     /* ADD ITEM function */
     const addItem = (e) => {
@@ -84,7 +91,7 @@ const InventoryPage = () => {
     }
     /* ******* */
 
-    const deleteItem = (id) => {
+    /*const deleteItem = (id) => {
         fetch(`http://localhost:3001/api/v1/inventories/${id}`, {
             method: 'DELETE',
         })
@@ -92,6 +99,20 @@ const InventoryPage = () => {
                 setItems(items.filter(item => item._id !== id));
             })
             .catch(error => console.error('Error deleting item:', error));
+    };*/
+
+    const deleteItem = (id) => {
+        fetch(`http://localhost:3001/api/v1/inventories/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ show: "0" }),
+        })
+            .then(() => {
+                setItems(items.filter(item => item._id !== id));
+            })
+            .catch(error => console.error('Error updating item:', error));
     };
 
     /* EDIT ITEM function */
@@ -328,6 +349,9 @@ const InventoryPage = () => {
                             <td className="px-6 py-4 whitespace-nowrap">{item.location}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{item.codepat}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                {/*<button onClick={() => viewItem(item._id)}
+                                        className="text-indigo-600 hover:text-indigo-900 m-1">View
+                                </button>*/}
                                 <button onClick={() => viewItem(item._id)}
                                         className="text-indigo-600 hover:text-indigo-900 m-1">View
                                 </button>

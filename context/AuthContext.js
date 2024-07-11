@@ -18,7 +18,40 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
+
+    /**
+     * Logs in a user with the given email and password.
+     *
+     * @param {string} email - The email of the user.
+     * @param {string} password - The password of the user.
+     * @throws {Error} If the email or password is invalid.
+     * @returns {Promise<void>} A promise that resolves when the login process is complete.
+     */
     const login = async (email, password) => {
+        /* users_id */
+        const response_users = await fetch('http://localhost:3001/api/v1/users', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const users_id = await response_users.json();
+        const login_user = users_id.filter(user => user.email === email && user.password === password)[0];
+
+        if(login_user) {
+            // The user was found
+            //console.log(login_user);
+            setCookie(null, 'users_id', login_user._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+            setCookie(null, 'hospitals_name', login_user.hospitals_id.name, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+            setCookie(null, 'hospitals_id', login_user.hospitals_id._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+            setCookie(null, 'profile', login_user.profile, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+        } else {
+            // The user was not found
+            console.log("No user matching the provided email and password was found")
+        }
+        /**********************/
+
         const response = await fetch('http://localhost:3001/api/v1/users', {
             method: 'POST',
             headers: {
@@ -59,6 +92,10 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         destroyCookie(null, 'auth-token');
+        destroyCookie(null, 'users_id');
+        destroyCookie(null, 'hospitals_id');
+        destroyCookie(null, 'hospitals_name');
+        destroyCookie(null, 'profile');
         setIsAuthenticated(false);
         router.push('/login');
     };

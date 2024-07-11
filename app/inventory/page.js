@@ -56,6 +56,12 @@ const InventoryPage = () => {
     };
     /**********************/
 
+    /* NEW OTM function */
+    const newOtm = (id) => {
+        router.push(`/otm/${id}`);
+    };
+    /**********************/
+
 
     /* ADD ITEM function */
     const addItem = (e) => {
@@ -352,6 +358,9 @@ const InventoryPage = () => {
                                 {/*<button onClick={() => viewItem(item._id)}
                                         className="text-indigo-600 hover:text-indigo-900 m-1">View
                                 </button>*/}
+                                <button onClick={() => newOtm(item._id)}
+                                        className="text-indigo-600 hover:text-indigo-900 m-1">NewOtm
+                                </button>
                                 <button onClick={() => viewItem(item._id)}
                                         className="text-indigo-600 hover:text-indigo-900 m-1">View
                                 </button>

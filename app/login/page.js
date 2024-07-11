@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
 const LoginPage = () => {
+
     const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

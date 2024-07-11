@@ -12,6 +12,7 @@ const Navbar = () => {
                 <div className="flex items-center space-x-4">
                     <Link href="/" className="text-white hover:text-gray-300">Home</Link>
                     <Link href="/inventory" className="text-white hover:text-gray-300">Inventory</Link>
+                    <Link href="/otm" className="text-white hover:text-gray-300">OTM</Link>
                 </div>
                 <button
                     onClick={logout}

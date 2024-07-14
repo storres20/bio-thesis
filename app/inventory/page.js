@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import $ from 'jquery';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
 import 'datatables.net';
+import {parseCookies} from "nookies";
 /************************/
 
 const InventoryPage = () => {
@@ -36,14 +37,26 @@ const InventoryPage = () => {
 
     const router = useRouter();
 
+    /* Get "hospitals_id" from cookies*/
+    const cookies = parseCookies();
+    const hospitals_id = cookies.hospitals_id
+
     useEffect(() => {
         fetchItems();
     }, []);
 
+    /**
+     * Fetch items from the server and set them using setItems function.
+     *
+     * @function fetchItems
+     * @returns {void}
+     */
     const fetchItems = () => {
-        fetch('http://localhost:3001/api/v1/inventories')
+        fetch(`http://localhost:3001/api/v1/inventories/getByHospital/${hospitals_id}`)
             .then(response => response.json())
             .then(data => {
+
+                /* Filtered by "show" and the current "hospitals_id" */
                 let filteredData = data.filter(item => item.show === "1");
                 setItems(filteredData)
             })
@@ -66,12 +79,13 @@ const InventoryPage = () => {
     /* ADD ITEM function */
     const addItem = (e) => {
         e.preventDefault()
+
         fetch('http://localhost:3001/api/v1/inventories/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name, brand, model, serie, location, codepat }),
+            body: JSON.stringify({ name, brand, model, serie, location, codepat, hospitals_id }),
         })
             .then(response => response.json())
             .then(data => {

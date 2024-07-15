@@ -1,16 +1,18 @@
 'use client'
 
 import {useState} from "react";
+import {parseCookies} from "nookies";
 
 const Newotm = () => {
 
-    const [codepat, setCodepat] = useState()
-    const [items, setItems] = useState()
+    const [codepat, setCodepat] = useState() // codigo patrimonial del equipo
+    const [items, setItems] = useState() // inventario del equipo
     const [resp, setResp] = useState() // catch ERROR response from backend
-    const [datetime, setDatetime] = useState()
 
-    const [servicio, setServicio] = useState()
-    const [problema, setProblema] = useState()
+    const [servicio, setServicio] = useState() // servicio hospitalario
+    const [problema, setProblema] = useState() // descripcion del problema
+
+    const [otm, setOtm] = useState()
 
     const checkButton = (e) => {
         e.preventDefault()
@@ -34,6 +36,13 @@ const Newotm = () => {
             });
     }
 
+    const datePeru = new Date().toLocaleString('es-PE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        timeZone: 'America/Lima'
+    });
+
     const dateTimePeru = new Date().toLocaleString('es-PE', {
         day: '2-digit',
         month: '2-digit',
@@ -43,12 +52,43 @@ const Newotm = () => {
         timeZone: 'America/Lima'
     });
 
-    console.log(dateTimePeru);
+    /* Get "user_id" from cookies*/
+    const cookies = parseCookies();
+    const users_id = cookies.users_id
+
 
     const addotm = (e) => {
-      e.preventDefault()
+        e.preventDefault()
 
-
+        fetch('http://localhost:3001/api/v1/historials/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        inventories_id: items._id,
+                        servicio: servicio,
+                        problema: problema,
+                        fecha_open: dateTimePeru,
+                        estado: 'open',
+                        usersid_open: users_id,
+                    }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            setResp(response)
+                            alert('Error al agregar OTM. Intente denuevo')
+                            throw Error('Error adding OTM')
+                        }
+                        return response.json()
+                    })
+                    .then(data => {
+                        setOtm(data)
+                        console.log(data)
+                    })
+                    .catch(error => {
+                        console.error('Error adding OTM:', error)
+                    });
     }
 
     return (
@@ -97,7 +137,7 @@ const Newotm = () => {
                     <div>
                         <label htmlFor="">Fecha de Solicitud</label>
                         <input type="text" className="px-3 py-2 border rounded bg-gray-300"
-                               value={dateTimePeru}
+                               value={datePeru}
                                disabled
                         />
                     </div>

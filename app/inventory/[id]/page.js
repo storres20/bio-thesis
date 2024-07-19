@@ -38,14 +38,20 @@ const InventoryDetail = ({ params }) => {
                 <table>
                     <thead>
                     <tr>
-                        <th>Info</th>
+                        <th>Fecha de Solicitud</th>
+                        <th>Problema</th>
+                        <th>Solucion</th>
+                        <th>Estado</th>
                     </tr>
                     </thead>
                     <tbody>
                     {
                         historyData.map((entry, i) => (
                             <tr key={i}>
-                                <td>{entry.info}</td>
+                                <td>{entry.fecha_open}</td>
+                                <td>{entry.problema}</td>
+                                <td>{entry.solucion}</td>
+                                <td>{entry.estado}</td>
                             </tr>
                         ))
                     }

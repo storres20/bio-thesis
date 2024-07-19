@@ -71,7 +71,7 @@ const InventoryPage = () => {
 
     /* NEW OTM function */
     const newOtm = (id) => {
-        router.push(`/otm/${id}`);
+        router.push(`/newotm/${id}`);
     };
     /**********************/
 

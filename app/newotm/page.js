@@ -1,10 +1,13 @@
 'use client'
 
 import {useState} from "react";
+import { useRouter } from 'next/navigation';
 import {parseCookies} from "nookies";
 
 const Newotm = () => {
+    const router = useRouter();
 
+    /* useState initialization */
     const [codepat, setCodepat] = useState() // codigo patrimonial del equipo
     const [items, setItems] = useState() // inventario del equipo
     const [resp, setResp] = useState() // catch ERROR response from backend
@@ -12,7 +15,6 @@ const Newotm = () => {
     const [servicio, setServicio] = useState() // servicio hospitalario
     const [problema, setProblema] = useState() // descripcion del problema
 
-    const [otm, setOtm] = useState()
 
     const checkButton = (e) => {
         e.preventDefault()
@@ -55,6 +57,7 @@ const Newotm = () => {
     /* Get "user_id" from cookies*/
     const cookies = parseCookies();
     const users_id = cookies.users_id
+    const hospitals_id = cookies.hospitals_id
 
 
     const addotm = (e) => {
@@ -66,6 +69,7 @@ const Newotm = () => {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
+                        hospitals_id: hospitals_id,
                         inventories_id: items._id,
                         servicio: servicio,
                         problema: problema,
@@ -89,6 +93,8 @@ const Newotm = () => {
                     .catch(error => {
                         console.error('Error adding OTM:', error)
                     });
+
+        router.push('/otm')
     }
 
     return (
@@ -146,6 +152,7 @@ const Newotm = () => {
                         <input type="text" className="px-3 py-2 border rounded"
                                onChange={(e) => setServicio(e.target.value)}
                                value={servicio}
+                               required
                         />
                     </div>
                     <div>
@@ -153,6 +160,7 @@ const Newotm = () => {
                         <input type="text" className="px-3 py-2 border rounded"
                                onChange={(e) => setProblema(e.target.value)}
                                value={problema}
+                               required
                         />
                     </div>
 

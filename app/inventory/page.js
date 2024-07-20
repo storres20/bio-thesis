@@ -1,14 +1,17 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 /* DataTable */
-import $ from 'jquery';
-import 'datatables.net-dt/css/dataTables.dataTables.css';
-import 'datatables.net';
-import {parseCookies} from "nookies";
+// Dynamic Import
+const DataTableComponent = dynamic(
+    () => import('../../components/DatatableInventory'),
+    { ssr: false }
+);
 /************************/
+import {parseCookies} from "nookies";
 
 const InventoryPage = () => {
     /* Backend API URL */
@@ -180,15 +183,6 @@ const InventoryPage = () => {
     }
     /* ********* */
 
-    /* DataTable useEffect */
-    useEffect(() => {
-        if (items.length > 0 && !dataLoaded) {
-            // Initialize DataTable
-            $('#example').DataTable();
-            setDataLoaded(true);
-        }
-    }, [items, dataLoaded]);
-
     return (
         <div className="p-8">
             <h1 className="text-2xl mb-6">Inventory</h1>
@@ -351,48 +345,7 @@ const InventoryPage = () => {
 
             {/* DataTable*/}
             <div className="overflow-x-auto">
-                <table id="example" className="display">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Brand</th>
-                        <th>Model</th>
-                        <th>Serie</th>
-                        <th>Location</th>
-                        <th>Codepat</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {items.map(item => (
-                        <tr key={item._id}>
-                            <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{item.brand}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{item.model}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{item.serie}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{item.location}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{item.codepat}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                {/*<button onClick={() => viewItem(item._id)}
-                                        className="text-indigo-600 hover:text-indigo-900 m-1">View
-                                </button>*/}
-                                <button onClick={() => newOtm(item._id)}
-                                        className="text-indigo-600 hover:text-indigo-900 m-1">NewOtm
-                                </button>
-                                <button onClick={() => viewItem(item._id)}
-                                        className="text-indigo-600 hover:text-indigo-900 m-1">View
-                                </button>
-                                <button onClick={() => editItem(item)}
-                                        className="text-indigo-600 hover:text-indigo-900 m-1">Edit
-                                </button>
-                                <button onClick={() => deleteItem(item._id)}
-                                        className="text-red-600 hover:text-red-900 m-1">Delete
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
+                <DataTableComponent items={items} dataLoaded={dataLoaded} />
             </div>
 
         </div>

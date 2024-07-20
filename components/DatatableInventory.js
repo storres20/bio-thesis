@@ -10,12 +10,6 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
     //const apiUrl = 'http://localhost:3001/api/v1'
     const apiUrl = 'https://bio-thesis-mongoback.vercel.app/api/v1'
 
-    useEffect(() => {
-        if (items.length > 0 && !dataLoaded) {
-            $('#example').DataTable();
-        }
-    }, [items, dataLoaded]);
-
     /* useState - edit item */
     const [itemx, setItemx] = useState(items);
 
@@ -27,6 +21,12 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
     const [editSerie, setEditSerie] = useState('');
     const [editLocation, setEditLocation] = useState('');
     const [editCodepat, setEditCodepat] = useState('');
+
+    useEffect(() => {
+        if (itemx.length > 0 && !dataLoaded) {
+            $('#example').DataTable();
+        }
+    }, [itemx, dataLoaded]);
 
     /* Router */
     const router = useRouter();

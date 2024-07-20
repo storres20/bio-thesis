@@ -3,18 +3,22 @@
 import { useEffect, useState } from 'react';
 
 const InventoryDetail = ({ params }) => {
+    /* Backend API URL */
+    //const apiUrl = 'http://localhost:3001/api/v1'
+    const apiUrl = 'https://bio-thesis-mongoback.vercel.app/api/v1'
+
     const { id } = params;
     const [item, setItem] = useState(null);
     const [historyData, setHistoryData] = useState(null);
 
     useEffect(() => {
         if (id) {
-            fetch(`http://localhost:3001/api/v1/inventories/${id}`)
+            fetch(`${apiUrl}/inventories/${id}`)
                 .then(response => response.json())
                 .then(data => setItem(data))
                 .catch(error => console.error('Error fetching item:', error));
 
-            fetch(`http://localhost:3001/api/v1/historials/getByInventory/${id}`)
+            fetch(`${apiUrl}/historials/getByInventory/${id}`)
                 .then(response => response.json())
                 .then(data => setHistoryData(data))
                 .catch(error => console.error('Error fetching history:', error));

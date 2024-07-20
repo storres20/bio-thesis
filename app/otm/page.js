@@ -12,6 +12,10 @@ import 'datatables.net';
 import {parseCookies} from "nookies";
 
 const OtmPage = () => {
+    /* Backend API URL */
+    //const apiUrl = 'http://localhost:3001/api/v1'
+    const apiUrl = 'https://bio-thesis-mongoback.vercel.app/api/v1'
+
     /* DataTable useState*/
     const [dataLoaded, setDataLoaded] = useState(false);
 
@@ -36,8 +40,9 @@ const OtmPage = () => {
         fetchItems();
     }, []);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchItems = () => {
-        fetch(`http://localhost:3001/api/v1/historials/getByHospital/${hospitals_id}`)
+        fetch(`${apiUrl}/historials/getByHospital/${hospitals_id}`)
             .then(response => response.json())
             .then(data => {
 

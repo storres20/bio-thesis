@@ -11,6 +11,10 @@ import {parseCookies} from "nookies";
 /************************/
 
 const InventoryPage = () => {
+    /* Backend API URL */
+    //const apiUrl = 'http://localhost:3001/api/v1'
+    const apiUrl = 'https://bio-thesis-mongoback.vercel.app/api/v1'
+
     /* add new item*/
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -52,7 +56,7 @@ const InventoryPage = () => {
      * @returns {void}
      */
     const fetchItems = () => {
-        fetch(`http://localhost:3001/api/v1/inventories/getByHospital/${hospitals_id}`)
+        fetch(`${apiUrl}/inventories/getByHospital/${hospitals_id}`)
             .then(response => response.json())
             .then(data => {
 
@@ -80,7 +84,7 @@ const InventoryPage = () => {
     const addItem = (e) => {
         e.preventDefault()
 
-        fetch('http://localhost:3001/api/v1/inventories/create', {
+        fetch(`${apiUrl}/inventories/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -122,7 +126,7 @@ const InventoryPage = () => {
     };*/
 
     const deleteItem = (id) => {
-        fetch(`http://localhost:3001/api/v1/inventories/${id}`, {
+        fetch(`${apiUrl}/inventories/${id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -142,7 +146,7 @@ const InventoryPage = () => {
 
     const updateItem = (e) => {
         e.preventDefault()
-        fetch(`http://localhost:3001/api/v1/inventories/${editItemId}`, {
+        fetch(`${apiUrl}/inventories/${editItemId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

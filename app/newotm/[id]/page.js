@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import {parseCookies} from "nookies";
 
 const NewotmDetails = ({ params }) => {
+    /* Backend API URL */
+    //const apiUrl = 'http://localhost:3001/api/v1'
+    const apiUrl = 'https://bio-thesis-mongoback.vercel.app/api/v1'
 
     const { id } = params;
 
@@ -22,9 +25,10 @@ const NewotmDetails = ({ params }) => {
         fetchItems();
     }, []);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchItems = () => {
 
-        fetch(`http://localhost:3001/api/v1/inventories/${id}`)
+        fetch(`${apiUrl}/inventories/${id}`)
             .then(response => {
                 if (!response.ok) {
                     setItems('')
@@ -68,7 +72,7 @@ const NewotmDetails = ({ params }) => {
     const addotm = (e) => {
         e.preventDefault()
 
-        fetch('http://localhost:3001/api/v1/historials/create', {
+        fetch(`${apiUrl}/historials/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

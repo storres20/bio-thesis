@@ -6,6 +6,10 @@ import { setCookie, parseCookies, destroyCookie } from 'nookies';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+    /* Backend API URL */
+    //const apiUrl = 'http://localhost:3001/api/v1'
+    const apiUrl = 'https://bio-thesis-mongoback.vercel.app/api/v1'
+
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const router = useRouter();
 
@@ -29,7 +33,7 @@ export const AuthProvider = ({ children }) => {
      */
     const login = async (email, password) => {
         /* users_id */
-        const response_users = await fetch('http://localhost:3001/api/v1/users', {
+        const response_users = await fetch(`${apiUrl}/users`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,7 +56,7 @@ export const AuthProvider = ({ children }) => {
         }
         /**********************/
 
-        const response = await fetch('http://localhost:3001/api/v1/users', {
+        const response = await fetch(`${apiUrl}/users`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,7 +76,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const register = async (profile, email, password) => {
-        const response = await fetch('http://localhost:3001/api/v1/users/create', {
+        const response = await fetch(`${apiUrl}/users/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

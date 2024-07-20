@@ -96,7 +96,6 @@ const NewotmDetails = ({ params }) => {
                 return response.json()
             })
             .then(data => {
-                setOtm(data)
                 console.log(data)
             })
             .catch(error => {

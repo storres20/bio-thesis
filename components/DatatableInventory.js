@@ -17,6 +17,8 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
     }, [items]);
 
     /* useState - edit item */
+    const [items, setItems] = useState([]);
+
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editItemId, setEditItemId] = useState(null);
     const [editName, setEditName] = useState('');

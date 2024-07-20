@@ -4,6 +4,8 @@ import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+import config from '@/config'; //for apiUrl
+
 /* DataTable */
 // Dynamic Import
 const DataTableComponent = dynamic(
@@ -15,13 +17,6 @@ const DataTableComponent = dynamic(
 import {parseCookies} from "nookies";
 
 const OtmPage = () => {
-    /* Backend API URL */
-    //const apiUrl = 'http://localhost:3001/api/v1'
-    const apiUrl = 'https://bio-thesis-mongoback.vercel.app/api/v1'
-
-    /* DataTable useState*/
-    const [dataLoaded, setDataLoaded] = useState(false);
-
     /* Get "hospitals_id" from cookies*/
     const cookies = parseCookies();
     const hospitals_id = cookies.hospitals_id
@@ -45,7 +40,7 @@ const OtmPage = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchItems = () => {
-        fetch(`${apiUrl}/historials/getByHospital/${hospitals_id}`)
+        fetch(`${config.apiUrl}/historials/getByHospital/${hospitals_id}`)
             .then(response => response.json())
             .then(data => {
 
@@ -68,7 +63,7 @@ const OtmPage = () => {
             <button onClick={newotm} className="bg-blue-500 text-white p-2 rounded">New OTM</button>
 
             {/* DataTable*/}
-            <DataTableComponent items={items} dataLoaded={dataLoaded} />
+            <DataTableComponent items={items}/>
         </div>
     );
 };

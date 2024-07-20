@@ -2,10 +2,9 @@
 'use client'
 import { useEffect, useState } from 'react';
 
+import config from '@/config'; //for apiUrl
+
 const InventoryDetail = ({ params }) => {
-    /* Backend API URL */
-    //const apiUrl = 'http://localhost:3001/api/v1'
-    const apiUrl = 'https://bio-thesis-mongoback.vercel.app/api/v1'
 
     const { id } = params;
     const [item, setItem] = useState(null);
@@ -13,12 +12,12 @@ const InventoryDetail = ({ params }) => {
 
     useEffect(() => {
         if (id) {
-            fetch(`${apiUrl}/inventories/${id}`)
+            fetch(`${config.apiUrl}/inventories/${id}`)
                 .then(response => response.json())
                 .then(data => setItem(data))
                 .catch(error => console.error('Error fetching item:', error));
 
-            fetch(`${apiUrl}/historials/getByInventory/${id}`)
+            fetch(`${config.apiUrl}/historials/getByInventory/${id}`)
                 .then(response => response.json())
                 .then(data => setHistoryData(data))
                 .catch(error => console.error('Error fetching history:', error));

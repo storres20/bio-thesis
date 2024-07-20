@@ -4,9 +4,9 @@ import 'datatables.net-dt/css/dataTables.dataTables.css';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const DataTableComponent = ({ items = [], dataLoaded }) => {
+const DataTableComponent = ({ items = [] }) => {
     useEffect(() => {
-        if (items.length > 0 && !dataLoaded) {
+        if (items.length > 0) {
             $('#example').DataTable();
         }
     }, [items]);

@@ -4,7 +4,10 @@ import {useState} from "react";
 import { useRouter } from 'next/navigation';
 import {parseCookies} from "nookies";
 
+import config from '@/config'; //for apiUrl
+
 const Newotm = () => {
+
     const router = useRouter();
 
     /* useState initialization */
@@ -19,7 +22,7 @@ const Newotm = () => {
     const checkButton = (e) => {
         e.preventDefault()
 
-        fetch(`http://localhost:3001/api/v1/inventories/codepat/${codepat}`)
+        fetch(`${config.apiUrl}/inventories/codepat/${codepat}`)
             .then(response => {
                 if (!response.ok) {
                     setItems('')
@@ -63,7 +66,7 @@ const Newotm = () => {
     const addotm = (e) => {
         e.preventDefault()
 
-        fetch('http://localhost:3001/api/v1/historials/create', {
+        fetch(`${config.apiUrl}/historials/create`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

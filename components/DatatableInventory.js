@@ -2,17 +2,13 @@ import $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
 
+import config from '@/config'; //for apiUrl
+
 import {useEffect, useState} from 'react';
 import { useRouter } from 'next/navigation';
 
-const DataTableComponent = ({ items = [], dataLoaded }) => {
-    /* Backend API URL */
-    //const apiUrl = 'http://localhost:3001/api/v1'
-    const apiUrl = 'https://bio-thesis-mongoback.vercel.app/api/v1'
-
+const DataTableComponent = ({ items = [], setItems }) => {
     /* useState - edit item */
-    const [itemx, setItemx] = useState(items);
-
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editItemId, setEditItemId] = useState(null);
     const [editName, setEditName] = useState('');
@@ -23,10 +19,10 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
     const [editCodepat, setEditCodepat] = useState('');
 
     useEffect(() => {
-        if (itemx.length > 0 && !dataLoaded) {
+        if (items.length > 0) {
             $('#example').DataTable();
         }
-    }, [itemx, dataLoaded]);
+    }, [items]);
 
     /* Router */
     const router = useRouter();
@@ -65,9 +61,10 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
     }
     /* ********* */
 
+
     const updateItem = (e) => {
         e.preventDefault()
-        fetch(`${apiUrl}/inventories/${editItemId}`, {
+        fetch(`${config.apiUrl}/inventories/${editItemId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,7 +73,7 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
         })
             .then(response => response.json())
             .then(data => {
-                setItemx(itemx.map(item =>
+                setItems(items.map(item =>
                     item._id === editItemId ? data : item
                 ));
                 closeEditModal()
@@ -85,7 +82,7 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
     };
 
     const deleteItem = (id) => {
-        fetch(`${apiUrl}/inventories/${id}`, {
+        fetch(`${config.apiUrl}/inventories/${id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -196,7 +193,7 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
                         </tr>
                         </thead>
                         <tbody>
-                        {itemx.map(item => (
+                        {items.map(item => (
                             <tr key={item._id}>
                                 <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
                                 <td className="px-6 py-4 whitespace-nowrap">{item.brand}</td>

@@ -3,6 +3,8 @@
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 
+import config from '@/config'; //for apiUrl
+
 /* DataTable */
 // Dynamic Import
 const DataTableComponent = dynamic(
@@ -13,10 +15,6 @@ const DataTableComponent = dynamic(
 import {parseCookies} from "nookies";
 
 const InventoryPage = () => {
-    /* Backend API URL */
-    //const apiUrl = 'http://localhost:3001/api/v1'
-    const apiUrl = 'https://bio-thesis-mongoback.vercel.app/api/v1'
-
     /* add new item*/
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -27,9 +25,6 @@ const InventoryPage = () => {
     const [serie, setSerie] = useState('');
     const [location, setLocation] = useState('');
     const [codepat, setCodepat] = useState('');
-
-    /* DataTable useState*/
-    const [dataLoaded, setDataLoaded] = useState(false);
 
     /* Get "hospitals_id" from cookies*/
     const cookies = parseCookies();
@@ -46,7 +41,7 @@ const InventoryPage = () => {
      * @returns {void}
      */
     const fetchItems = () => {
-        fetch(`${apiUrl}/inventories/getByHospital/${hospitals_id}`)
+        fetch(`${config.apiUrl}/inventories/getByHospital/${hospitals_id}`)
             .then(response => response.json())
             .then(data => {
 
@@ -61,7 +56,7 @@ const InventoryPage = () => {
     const addItem = (e) => {
         e.preventDefault()
 
-        fetch(`${apiUrl}/inventories/create`, {
+        fetch(`${config.apiUrl}/inventories/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -175,7 +170,7 @@ const InventoryPage = () => {
             {/******************/}
 
             {/* DataTable*/}
-            <DataTableComponent items={items} dataLoaded={dataLoaded} />
+            <DataTableComponent items={items} setItems={setItems} />
 
         </div>
     );

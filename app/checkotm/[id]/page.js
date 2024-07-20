@@ -4,7 +4,10 @@ import {useEffect, useState} from "react";
 import { useRouter } from 'next/navigation';
 import {parseCookies} from "nookies";
 
+import config from '@/config'; //for apiUrl
+
 const Checkotm = ({ params }) => {
+
     const { id } = params;
 
     const router = useRouter();
@@ -20,7 +23,7 @@ const Checkotm = ({ params }) => {
     }, []);
 
     const fetchItems = () => {
-        fetch(`http://localhost:3001/api/v1/historials/${id}`)
+        fetch(`${config.apiUrl}/historials/${id}`)
             .then(response => {
                 if (!response.ok) {
                     setItems('')
@@ -64,7 +67,7 @@ const Checkotm = ({ params }) => {
     const closeotm = (e) => {
         e.preventDefault()
 
-        fetch(`http://localhost:3001/api/v1/historials/${id}`, {
+        fetch(`${config.apiUrl}/historials/${id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

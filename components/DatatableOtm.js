@@ -2,6 +2,7 @@ import $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const DataTableComponent = ({ items = [], dataLoaded }) => {
     useEffect(() => {
@@ -9,6 +10,9 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
             $('#example').DataTable();
         }
     }, [items]);
+
+    /* Router */
+    const router = useRouter();
 
     return (
         // The table structure goes here

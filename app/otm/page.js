@@ -68,9 +68,7 @@ const OtmPage = () => {
             <button onClick={newotm} className="bg-blue-500 text-white p-2 rounded">New OTM</button>
 
             {/* DataTable*/}
-            <div className="overflow-x-auto">
-                <DataTableComponent items={items} />
-            </div>
+            <DataTableComponent items={items} dataLoaded={dataLoaded} />
         </div>
     );
 };

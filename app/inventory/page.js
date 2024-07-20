@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
 /* DataTable */
 // Dynamic Import
@@ -29,20 +28,8 @@ const InventoryPage = () => {
     const [location, setLocation] = useState('');
     const [codepat, setCodepat] = useState('');
 
-    /* edit item */
-    const [editModalOpen, setEditModalOpen] = useState(false);
-    const [editItemId, setEditItemId] = useState(null);
-    const [editName, setEditName] = useState('');
-    const [editBrand, setEditBrand] = useState('');
-    const [editModel, setEditModel] = useState('');
-    const [editSerie, setEditSerie] = useState('');
-    const [editLocation, setEditLocation] = useState('');
-    const [editCodepat, setEditCodepat] = useState('');
-
     /* DataTable useState*/
     const [dataLoaded, setDataLoaded] = useState(false);
-
-    const router = useRouter();
 
     /* Get "hospitals_id" from cookies*/
     const cookies = parseCookies();
@@ -69,19 +56,6 @@ const InventoryPage = () => {
             })
             .catch(error => console.error('Error fetching items:', error));
     };
-
-    /* VIEW ITEM function */
-    const viewItem = (id) => {
-        router.push(`/inventory/${id}`);
-    };
-    /**********************/
-
-    /* NEW OTM function */
-    const newOtm = (id) => {
-        router.push(`/newotm/${id}`);
-    };
-    /**********************/
-
 
     /* ADD ITEM function */
     const addItem = (e) => {
@@ -118,70 +92,6 @@ const InventoryPage = () => {
     }
     /* ******* */
 
-    /*const deleteItem = (id) => {
-        fetch(`http://localhost:3001/api/v1/inventories/${id}`, {
-            method: 'DELETE',
-        })
-            .then(() => {
-                setItems(items.filter(item => item._id !== id));
-            })
-            .catch(error => console.error('Error deleting item:', error));
-    };*/
-
-    const deleteItem = (id) => {
-        fetch(`${apiUrl}/inventories/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ show: "0" }),
-        })
-            .then(() => {
-                setItems(items.filter(item => item._id !== id));
-            })
-            .catch(error => console.error('Error updating item:', error));
-    };
-
-    /* EDIT ITEM function */
-    const editItem = (item) => {
-        openEditModal(item);
-    };
-
-    const updateItem = (e) => {
-        e.preventDefault()
-        fetch(`${apiUrl}/inventories/${editItemId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name: editName, brand: editBrand, model: editModel, serie: editSerie, location: editLocation, codepat: editCodepat }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                setItems(items.map(item =>
-                    item._id === editItemId ? data : item
-                ));
-                closeEditModal()
-            })
-            .catch(error => console.error('Error updating item:', error));
-    };
-
-    /* open and close modal for EDIT ITEM */
-    const openEditModal = (item) => {
-        setEditItemId(item._id);
-        setEditName(item.name);
-        setEditBrand(item.brand);
-        setEditModel(item.model);
-        setEditSerie(item.serie);
-        setEditLocation(item.location);
-        setEditCodepat(item.codepat);
-        setEditModalOpen(true);
-    }
-
-    const closeEditModal = () => {
-        setEditModalOpen(false);
-    }
-    /* ********* */
 
     return (
         <div className="p-8">
@@ -264,89 +174,8 @@ const InventoryPage = () => {
             )}
             {/******************/}
 
-            {/* EDIT ITEM modal */}
-            {editModalOpen && (
-                <div
-                    className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-70 z-50">
-                    <div className="p-8 bg-white rounded-lg shadow-lg m-4 sm:m-8 lg:w-1/2">
-                        <button onClick={closeEditModal} className="float-right text-gray-500 hover:text-gray-700">✖️
-                        </button>
-                        <form onSubmit={updateItem}>
-                            <div className="mb-4">
-                                <label className="block text-gray-700">Item Name</label>
-                                <input
-                                    type="text"
-                                    value={editName}
-                                    onChange={(e) => setEditName(e.target.value)}
-                                    className="w-full px-3 py-2 border rounded"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700">Item Brand</label>
-                                <input
-                                    type="text"
-                                    value={editBrand}
-                                    onChange={(e) => setEditBrand(e.target.value)}
-                                    className="w-full px-3 py-2 border rounded"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700">Item Model</label>
-                                <input
-                                    type="text"
-                                    value={editModel}
-                                    onChange={(e) => setEditModel(e.target.value)}
-                                    className="w-full px-3 py-2 border rounded"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700">Item Serie</label>
-                                <input
-                                    type="text"
-                                    value={editSerie}
-                                    onChange={(e) => setEditSerie(e.target.value)}
-                                    className="w-full px-3 py-2 border rounded"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700">Item Location</label>
-                                <input
-                                    type="text"
-                                    value={editLocation}
-                                    onChange={(e) => setEditLocation(e.target.value)}
-                                    className="w-full px-3 py-2 border rounded"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700">Item Codepat</label>
-                                <input
-                                    type="text"
-                                    value={editCodepat}
-                                    onChange={(e) => setEditCodepat(e.target.value)}
-                                    className="w-full px-3 py-2 border rounded"
-                                    required
-                                />
-                            </div>
-
-                            <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Update
-                                Item
-                            </button>
-
-                        </form>
-                    </div>
-                </div>
-            )}
-            {/******************/}
-
             {/* DataTable*/}
-            <div className="overflow-x-auto">
-                <DataTableComponent items={items} dataLoaded={dataLoaded} />
-            </div>
+            <DataTableComponent items={items} dataLoaded={dataLoaded} />
 
         </div>
     );

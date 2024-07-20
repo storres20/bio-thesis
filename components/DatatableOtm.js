@@ -13,7 +13,8 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
     return (
         // The table structure goes here
         // Example:
-        <table id="example" className="display">
+        <div className="overflow-x-auto">
+            <table id="example" className="display">
                     <thead>
                     <tr>
                         <th>Fecha de solicitud</th>
@@ -58,6 +59,7 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
                     ))}
                     </tbody>
                 </table>
+        </div>
     );
 };
 

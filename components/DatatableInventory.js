@@ -14,10 +14,10 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
         if (items.length > 0 && !dataLoaded) {
             $('#example').DataTable();
         }
-    }, [items]);
+    }, [items, dataLoaded]);
 
     /* useState - edit item */
-    const [items, setItems] = useState([]);
+    const [itemx, setItemx] = useState(items);
 
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editItemId, setEditItemId] = useState(null);
@@ -76,7 +76,7 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
         })
             .then(response => response.json())
             .then(data => {
-                setItems(items.map(item =>
+                setItemx(itemx.map(item =>
                     item._id === editItemId ? data : item
                 ));
                 closeEditModal()
@@ -196,7 +196,7 @@ const DataTableComponent = ({ items = [], dataLoaded }) => {
                         </tr>
                         </thead>
                         <tbody>
-                        {items.map(item => (
+                        {itemx.map(item => (
                             <tr key={item._id}>
                                 <td className="px-6 py-4 whitespace-nowrap">{item.name}</td>
                                 <td className="px-6 py-4 whitespace-nowrap">{item.brand}</td>

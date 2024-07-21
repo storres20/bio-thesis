@@ -90,7 +90,7 @@ const Checkotm = ({ params }) => {
 
     return (
         <div>
-            <h1>This is newOtm Page</h1>
+            <h1>This is checkOtm Page</h1>
 
             {items && (resp !== 400) &&
                 <form onSubmit={closeotm}>
@@ -159,6 +159,7 @@ const Checkotm = ({ params }) => {
                         <input type="text" className="px-3 py-2 border rounded"
                                onChange={(e) => setSolucion(e.target.value)}
                                value={solucion}
+                               required
                         />
                     </div>
 

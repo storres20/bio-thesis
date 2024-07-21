@@ -82,17 +82,20 @@ const DataTableComponent = ({ items = [], setItems }) => {
     };
 
     const deleteItem = (id) => {
-        fetch(`${config.apiUrl}/inventories/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ show: "0" }),
-        })
-            .then(() => {
-                setItems(items.filter(item => item._id !== id));
+        if (window.confirm('Are you sure you want to delete this item?')) {
+            // Action to delete item
+            fetch(`${config.apiUrl}/inventories/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ show: "0" }),
             })
-            .catch(error => console.error('Error updating item:', error));
+                .then(() => {
+                    setItems(items.filter(item => item._id !== id));
+                })
+                .catch(error => console.error('Error updating item:', error));
+        }
     };
 
 

@@ -12,7 +12,7 @@ export default function Home() {
     const profile = cookies.profile
 
     return (
-        <main>
+        <main className="p-8">
 
             <h1>Welcome!!</h1>
             <p>user id : {users_id}</p>

@@ -1,6 +1,6 @@
 'use client'
 
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { useRouter } from 'next/navigation';
 import {parseCookies} from "nookies";
 
@@ -17,6 +17,14 @@ const Newotm = () => {
 
     const [servicio, setServicio] = useState() // servicio hospitalario
     const [problema, setProblema] = useState() // descripcion del problema
+
+    const [otm, setOtm] = useState()
+
+
+    /* useEffect to update states on other pages */
+    useEffect(() => {
+        console.log(otm)
+    }, [otm]);
 
 
     const checkButton = (e) => {
@@ -90,13 +98,14 @@ const Newotm = () => {
                         return response.json()
                     })
                     .then(data => {
+                        setOtm(data)
                         console.log(data)
                     })
                     .catch(error => {
                         console.error('Error adding OTM:', error)
                     });
 
-        router.push('/otm')
+                router.push('/otm')
     }
 
     return (

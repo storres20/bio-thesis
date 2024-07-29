@@ -54,7 +54,7 @@ const DataTableComponent = ({ items = [] }) => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 {item.estado === "open" && (
                                     <button
-                                        onClick={() => router.push(`/checkotm/${item._id}`)}
+                                        onClick={() => router.push(`/health/checkotm/${item._id}`)}
                                         className="bg-blue-500 text-white p-2 rounded">Check
                                     </button>
                                 )}

@@ -35,8 +35,9 @@ const RegisterPage = () => {
                             onChange={(e) => setProfile(e.target.value)}
                             required
                         >
-                            <option value="health">health</option>
-                            <option value="engineer">engineer</option>
+                            <option value="health">HEALTH</option>
+                            <option value="engineer">MAINTENANCE</option>
+                            <option value="engineer">STORAGE</option>
                         </select>
                     </div>
                     <div className="mb-4">

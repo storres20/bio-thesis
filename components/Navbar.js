@@ -30,10 +30,10 @@ const Dropdown = ({children}) => {
             {isOpen && (
                 <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                     <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                        {children.map((child) => {
+                        {children.map((child, index) => {
                             // Cloning child elements and adding additional onClick to them
                             return (
-                                <div onClick={()=>setIsOpen(false)}>
+                                <div key={index} onClick={()=>setIsOpen(false)}>
                                     {child}
                                 </div>
                             );
@@ -47,7 +47,14 @@ const Dropdown = ({children}) => {
 const Navbar = () => {
     const { isAuthenticated, logout } = useAuth();
     const cookies = parseCookies();
-    const profile = cookies.profile ? cookies.profile : "ADMIN";
+    //const profile = cookies.profile ? cookies.profile : "ADMIN";
+
+    const [profile, setProfile] = useState("ADMIN");
+
+    useEffect(() => {
+        setProfile(cookies.profile ? cookies.profile : "ADMIN");
+    }, []);
+
     if (!isAuthenticated) return null;
     return (
         <nav className="bg-gray-800 p-4">

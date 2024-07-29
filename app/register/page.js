@@ -1,22 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 
+import config from '@/config'; //for apiUrl
+
 const RegisterPage = () => {
     const { register } = useAuth();
-    const [profile, setProfile] = useState('health');
+    const [hospitals_id, setHospitalsId] = useState('');
+    const [profile, setProfile] = useState('HEALTH');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+
+    const [hospitals, setHospitals] = useState([]);
+
+    // Fetch hospitals
+    useEffect(() => {
+        fetch(`${config.apiUrl}/hospitals`)
+            .then(response => response.json())
+            .then(data => setHospitals(data))
+            .catch(error => console.error('Error:', error));
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
         try {
-            await register(profile, email, password);
+            await register(profile, email, password, hospitals_id);
         } catch (err) {
             setError('An error occurred');
         }
@@ -28,6 +41,21 @@ const RegisterPage = () => {
                 <h2 className="text-2xl mb-6 text-center">Register</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
+                        <label className="block text-gray-700">Hospital:</label>
+                        <select
+                            className="w-full px-3 py-2 border rounded"
+                            value={hospitals_id}
+                            onChange={(e) => setHospitalsId(e.target.value)}
+                            required
+                        >
+                            <option value="">--select an option--</option>
+
+                            {hospitals.map(hospital =>
+                                <option key={hospital._id} value={hospital._id}>{hospital.name}</option>
+                            )}
+                        </select>
+                    </div>
+                    <div className="mb-4">
                         <label className="block text-gray-700">Profile:</label>
                         <select
                             className="w-full px-3 py-2 border rounded"
@@ -35,9 +63,9 @@ const RegisterPage = () => {
                             onChange={(e) => setProfile(e.target.value)}
                             required
                         >
-                            <option value="health">HEALTH</option>
-                            <option value="engineer">MAINTENANCE</option>
-                            <option value="engineer">STORAGE</option>
+                            <option value="HEALTH">HEALTH</option>
+                            <option value="MAINTENANCE">MAINTENANCE</option>
+                            <option value="STORAGE">STORAGE</option>
                         </select>
                     </div>
                     <div className="mb-4">

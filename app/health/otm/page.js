@@ -9,7 +9,7 @@ import config from '@/config'; //for apiUrl
 /* DataTable */
 // Dynamic Import
 const DataTableComponent = dynamic(
-    () => import('../../components/DatatableOtm'),
+    () => import('@/components/DatatableOtm'),
     { ssr: false }
 );
 /************************/
@@ -53,7 +53,7 @@ const OtmPage = () => {
     };
 
     const newotm = () => {
-      router.push('/newotm')
+      router.push('/health/newotm')
     }
 
 

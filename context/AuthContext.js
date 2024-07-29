@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
 
         if(login_user) {
             // The user was found
-            //console.log(login_user);
+            console.log(login_user);
             setCookie(null, 'users_id', login_user._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
             setCookie(null, 'hospitals_name', login_user.hospitals_id.name, { maxAge: 30 * 24 * 60 * 60, path: '/' });
             setCookie(null, 'hospitals_id', login_user.hospitals_id._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
@@ -76,22 +76,31 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (profile, email, password) => {
+    const register = async (profile, email, password, hospitals_id) => {
         const response = await fetch(`${config.apiUrl}/users/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ profile, email, password }),
+            body: JSON.stringify({ profile, email, password, hospitals_id }),
         });
 
         if (!response.ok) {
             throw new Error('Failed to register');
+            alert('Failed to register')
         }
 
         const data = await response.json();
+        console.log(data)
         setCookie(null, 'auth-token', 'authenticated', { maxAge: 30 * 24 * 60 * 60, path: '/' });
         setIsAuthenticated(true);
+
+        setCookie(null, 'users_id', data._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+        setCookie(null, 'hospitals_name', data.hospitals_id.name, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+        setCookie(null, 'hospitals_id', data.hospitals_id._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+        setCookie(null, 'profile', data.profile, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+
+        alert('Successfully register')
         router.push('/'); // Redirect to inventory page after registration
     };
 

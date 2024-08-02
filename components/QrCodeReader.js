@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode, Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 
 const QrCodeReader = () => {
     const [result, setResult] = useState('');
     const [cameraId, setCameraId] = useState('');
     const [cameras, setCameras] = useState([]);
     const [isScanning, setIsScanning] = useState(false);
-    const qrCodeScannerRef = useRef(null);
+    const [scanner, setScanner] = useState(null);
+    const [cameraSelected, setCameraSelected] = useState(false);
 
     useEffect(() => {
         const fetchCameras = async () => {
@@ -24,37 +25,50 @@ const QrCodeReader = () => {
         fetchCameras();
     }, []);
 
+    useEffect(() => {
+        if (scanner && cameraId) {
+            scanner.stop();
+            scanner.start({ facingMode: { exact: cameraId } }, { fps: 10, qrbox: 250 }, (decodedText) => {
+                setResult(decodedText);
+                stopScanning(); // Stop scanning after successful result
+            }).catch((error) => {
+                console.error('Error starting scanner:', error);
+            });
+        }
+    }, [cameraId]);
+
     const startScanning = () => {
         if (!cameraId) {
             console.error('No camera selected');
             return;
         }
 
-        const qrCodeScanner = new Html5QrcodeScanner(
-            "reader",
+        const newScanner = new Html5Qrcode("reader");
+        setScanner(newScanner);
+
+        newScanner.start(
+            { facingMode: { exact: cameraId } },
             { fps: 10, qrbox: 250 },
-            false
-        );
-
-        qrCodeScannerRef.current = qrCodeScanner;
-
-        qrCodeScanner.render(
-            (decodedText, decodedResult) => {
+            (decodedText) => {
                 setResult(decodedText);
                 stopScanning(); // Stop scanning after successful result
             },
             (errorMessage) => {
                 console.error(`QR Code no longer in front of camera. Error: ${errorMessage}`);
-            },
-            { facingMode: { exact: cameraId } }
-        );
+            }
+        ).catch((error) => {
+            console.error('Error starting scanner:', error);
+        });
 
         setIsScanning(true);
+        setCameraSelected(true);
     };
 
     const stopScanning = () => {
-        if (qrCodeScannerRef.current) {
-            qrCodeScannerRef.current.clear();
+        if (scanner) {
+            scanner.stop().catch((error) => {
+                console.error('Error stopping scanner:', error);
+            });
         }
         setIsScanning(false);
     };
@@ -67,6 +81,7 @@ const QrCodeReader = () => {
                     id="cameraSelect"
                     value={cameraId}
                     onChange={(e) => setCameraId(e.target.value)}
+                    disabled={isScanning}
                 >
                     {cameras.map((camera) => (
                         <option key={camera.id} value={camera.id}>

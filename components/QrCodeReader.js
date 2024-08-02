@@ -86,7 +86,15 @@ const QrCodeReader = () => {
                     {isScanning ? 'Stop Scanning' : 'Start Scanning'}
                 </button>
             </div>
-            <div id="reader" style={{ width: '500px', transform: 'scaleX(-1)' }}></div>
+            <div
+                id="reader"
+                style={{
+                    width: '100%',
+                    maxWidth: '500px',
+                    transform: 'scaleX(-1)', // Mirror effect
+                    overflow: 'hidden',
+                }}
+            ></div>
             <div>
                 <h2>Result:</h2>
                 <p>{result}</p>

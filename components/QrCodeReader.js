@@ -6,6 +6,7 @@ const QrCodeReader = () => {
     const [cameraId, setCameraId] = useState('');
     const [cameras, setCameras] = useState([]);
     const [isScanning, setIsScanning] = useState(false);
+    const [videoElement, setVideoElement] = useState(null);
     const scannerRef = useRef(null);
 
     useEffect(() => {
@@ -48,7 +49,11 @@ const QrCodeReader = () => {
             (errorMessage) => {
                 console.error(`QR Code no longer in front of camera. Error: ${errorMessage}`);
             }
-        ).catch((error) => {
+        ).then(() => {
+            if (videoElement) {
+                videoElement.style.transform = 'scaleX(-1)'; // Apply mirror effect
+            }
+        }).catch((error) => {
             console.error('Error starting scanner:', error);
         });
 
@@ -65,6 +70,24 @@ const QrCodeReader = () => {
         }
         setIsScanning(false);
     };
+
+    useEffect(() => {
+        // Watch for changes to the video element and apply mirror effect
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target.tagName === 'VIDEO') {
+                    setVideoElement(mutation.target);
+                }
+            });
+        });
+
+        const readerElement = document.getElementById('reader');
+        observer.observe(readerElement, { childList: true, subtree: true });
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
 
     return (
         <div>
@@ -86,15 +109,7 @@ const QrCodeReader = () => {
                     {isScanning ? 'Stop Scanning' : 'Start Scanning'}
                 </button>
             </div>
-            <div
-                id="reader"
-                style={{
-                    width: '100%',
-                    maxWidth: '500px',
-                    transform: 'scaleX(-1)', // Mirror effect
-                    overflow: 'hidden',
-                }}
-            ></div>
+            <div id="reader" style={{ width: '100%', maxWidth: '500px', position: 'relative' }}></div>
             <div>
                 <h2>Result:</h2>
                 <p>{result}</p>

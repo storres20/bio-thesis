@@ -12,6 +12,7 @@
     "@reduxjs/toolkit": "^2.2.6",
     "datatables.net": "^2.1.0",
     "datatables.net-dt": "^2.1.0",
+    "html5-qrcode": "^2.3.8",
     "jquery": "^3.7.1",
     "next": "14.2.4",
     "nookies": "^2.5.2",

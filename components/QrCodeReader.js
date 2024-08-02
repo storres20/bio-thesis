@@ -7,7 +7,6 @@ const QrCodeReader = () => {
     const [cameras, setCameras] = useState([]);
     const [isScanning, setIsScanning] = useState(false);
     const [scanner, setScanner] = useState(null);
-    const [cameraSelected, setCameraSelected] = useState(false);
 
     useEffect(() => {
         const fetchCameras = async () => {
@@ -15,7 +14,7 @@ const QrCodeReader = () => {
                 const devices = await Html5Qrcode.getCameras();
                 setCameras(devices);
                 if (devices.length > 0) {
-                    setCameraId(devices[0].id);
+                    setCameraId(devices[0].id); // Default to the first camera
                 }
             } catch (error) {
                 console.error('Error fetching cameras:', error);
@@ -25,30 +24,23 @@ const QrCodeReader = () => {
         fetchCameras();
     }, []);
 
-    useEffect(() => {
-        if (scanner && cameraId) {
-            scanner.stop();
-            scanner.start({ facingMode: { exact: cameraId } }, { fps: 10, qrbox: 250 }, (decodedText) => {
-                setResult(decodedText);
-                stopScanning(); // Stop scanning after successful result
-            }).catch((error) => {
-                console.error('Error starting scanner:', error);
-            });
-        }
-    }, [cameraId]);
-
     const startScanning = () => {
         if (!cameraId) {
             console.error('No camera selected');
             return;
         }
 
+        const config = {
+            fps: 10,
+            qrbox: 250,
+        };
+
         const newScanner = new Html5Qrcode("reader");
         setScanner(newScanner);
 
         newScanner.start(
-            { facingMode: { exact: cameraId } },
-            { fps: 10, qrbox: 250 },
+            { facingMode: 'environment' }, // Default to the back camera
+            config,
             (decodedText) => {
                 setResult(decodedText);
                 stopScanning(); // Stop scanning after successful result
@@ -61,7 +53,6 @@ const QrCodeReader = () => {
         });
 
         setIsScanning(true);
-        setCameraSelected(true);
     };
 
     const stopScanning = () => {

@@ -6,7 +6,7 @@ const QrCodeReader = () => {
     const [cameraId, setCameraId] = useState('');
     const [cameras, setCameras] = useState([]);
     const [isScanning, setIsScanning] = useState(false);
-    const [scanner, setScanner] = useState(null);
+    const scannerRef = useRef(null);
 
     useEffect(() => {
         const fetchCameras = async () => {
@@ -36,7 +36,7 @@ const QrCodeReader = () => {
         };
 
         const newScanner = new Html5Qrcode("reader");
-        setScanner(newScanner);
+        scannerRef.current = newScanner;
 
         newScanner.start(
             { facingMode: 'environment' }, // Default to the back camera
@@ -56,8 +56,10 @@ const QrCodeReader = () => {
     };
 
     const stopScanning = () => {
-        if (scanner) {
-            scanner.stop().catch((error) => {
+        if (scannerRef.current) {
+            scannerRef.current.stop().then(() => {
+                console.log('Scanner stopped');
+            }).catch((error) => {
                 console.error('Error stopping scanner:', error);
             });
         }
@@ -84,7 +86,7 @@ const QrCodeReader = () => {
                     {isScanning ? 'Stop Scanning' : 'Start Scanning'}
                 </button>
             </div>
-            <div id="reader" style={{ width: '500px' }}></div>
+            <div id="reader" style={{ width: '500px', transform: 'scaleX(-1)' }}></div>
             <div>
                 <h2>Result:</h2>
                 <p>{result}</p>

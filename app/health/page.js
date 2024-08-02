@@ -2,6 +2,7 @@
 'use client'
 
 import { setCookie, parseCookies, destroyCookie } from 'nookies';
+import QrCodeReader from '@/components/QrCodeReader';
 
 export default function HealthPage() {
 
@@ -16,6 +17,9 @@ export default function HealthPage() {
         <div className="p-8">
             {/* Import and use other components here */}
             <h1>Health Content</h1>
+
+            <h2>QR Code Reader</h2>
+            <QrCodeReader/>
         </div>
     );
 }

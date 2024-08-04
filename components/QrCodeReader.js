@@ -7,7 +7,11 @@ const QrCodeReader = () => {
     const [cameras, setCameras] = useState([]);
     const [isScanning, setIsScanning] = useState(false);
     const [videoElement, setVideoElement] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [isPreviewVisible, setIsPreviewVisible] = useState(false);
     const scannerRef = useRef(null);
+
+    const fileInputRef = useRef(null); // Ref for file input
 
     useEffect(() => {
         const fetchCameras = async () => {
@@ -36,6 +40,9 @@ const QrCodeReader = () => {
             qrbox: 250,
         };
 
+        //setImagePreview(null)
+        setIsPreviewVisible(false)
+
         const newScanner = new Html5Qrcode("reader");
         scannerRef.current = newScanner;
 
@@ -45,6 +52,10 @@ const QrCodeReader = () => {
             (decodedText) => {
                 setResult(decodedText);
                 stopScanning(); // Stop scanning after successful result
+
+                //setImagePreview(null) // hide image preview button
+                //setIsPreviewVisible(true)
+                fileInputRef.current.value = ''; // Clear the file input value
             },
             (errorMessage) => {
                 console.error(`QR Code no longer in front of camera. Error: ${errorMessage}`);
@@ -60,15 +71,53 @@ const QrCodeReader = () => {
         setIsScanning(true);
     };
 
-    const stopScanning = () => {
+    const stopScanning = async () => {
         if (scannerRef.current) {
-            scannerRef.current.stop().then(() => {
+            try {
+                await scannerRef.current.stop();
                 console.log('Scanner stopped');
-            }).catch((error) => {
+                setIsScanning(false);
+
+                // Clean up video element if necessary
+                if (videoElement) {
+                    const tracks = videoElement.srcObject?.getTracks();
+                    if (tracks) {
+                        tracks.forEach(track => track.stop());
+                    }
+                }
+                scannerRef.current = null; // Clear the reference
+            } catch (error) {
                 console.error('Error stopping scanner:', error);
-            });
+            }
+        } else {
+            setIsScanning(false);
         }
-        setIsScanning(false);
+    };
+
+    const handleImageUpload = (event) => {
+        setResult(''); // Clear the result before starting a new scan
+        const file = event.target.files[0];
+        if (file) {
+            const previewUrl = URL.createObjectURL(file);
+            setImagePreview(previewUrl); // Set image preview URL
+            setIsPreviewVisible(false) // Show preview image
+            const newScanner = new Html5Qrcode("reader");
+            scannerRef.current = newScanner;
+
+            newScanner.scanFile(file, true)
+                .then(decodedText => {
+                    setResult(decodedText);
+                    stopScanning(); // Stop scanning after successful result
+                })
+                .catch(err => {
+                    console.error('Error decoding image:', err);
+                    setResult('NO QR CODE DETECTED');
+                });
+        }
+    };
+
+    const togglePreview = () => {
+        setIsPreviewVisible(!isPreviewVisible);
     };
 
     useEffect(() => {
@@ -90,14 +139,15 @@ const QrCodeReader = () => {
     }, []);
 
     return (
-        <div>
+        <div className="space-y-4">
             <div>
-                <label htmlFor="cameraSelect">Select Camera:</label>
+                <label htmlFor="cameraSelect" className="block mb-2 font-medium text-gray-700">Select Camera:</label>
                 <select
                     id="cameraSelect"
                     value={cameraId}
                     onChange={(e) => setCameraId(e.target.value)}
                     disabled={isScanning}
+                    className="border border-gray-300 rounded p-2"
                 >
                     {cameras.map((camera) => (
                         <option key={camera.id} value={camera.id}>
@@ -105,14 +155,38 @@ const QrCodeReader = () => {
                         </option>
                     ))}
                 </select>
-                <button onClick={isScanning ? stopScanning : startScanning}>
+                <button
+                    onClick={isScanning ? stopScanning : startScanning}
+                    className={`mt-2 px-4 py-2 rounded text-white ${isScanning ? 'bg-red-500' : 'bg-blue-500'} hover:${isScanning ? 'bg-red-600' : 'bg-blue-600'}`}
+                >
                     {isScanning ? 'Stop Scanning' : 'Start Scanning'}
                 </button>
             </div>
-            <div id="reader" style={{ width: '100%', maxWidth: '500px', position: 'relative' }}></div>
             <div>
-                <h2>Result:</h2>
-                <p>{result}</p>
+                <label htmlFor="imageUpload" className="block mb-2 font-medium text-gray-700">Attach Image:</label>
+                <input
+                    type="file"
+                    id="imageUpload"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isScanning}
+                    className="border border-gray-300 rounded p-2"
+                    ref={fileInputRef} // Attach ref
+                />
+                {imagePreview && (
+                    <button
+                        onClick={togglePreview}
+                        className={`px-4 py-2 rounded text-white ${isPreviewVisible ? 'bg-green-500' : 'bg-gray-500'} hover:${isPreviewVisible ? 'bg-gray-600' : 'bg-green-600'}`}
+                    >
+                        {isPreviewVisible ? 'Show Preview' : 'Hide Preview'}
+                    </button>
+                )}
+            </div>
+
+            <div id="reader" className={`w-auto max-w-lg mx-auto relative ${isPreviewVisible ? 'hidden' : ''}`}></div>
+            <div>
+                <h2 className="text-xl font-semibold">Result:</h2>
+                <p className="mt-2 text-lg">{result}</p>
             </div>
         </div>
     );

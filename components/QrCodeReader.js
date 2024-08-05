@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 
-const QrCodeReader = ({ result, setResult }) => {
+const QrCodeReader = ({ setResult }) => {
     const [cameraId, setCameraId] = useState('');
     const [cameras, setCameras] = useState([]);
     const [isScanning, setIsScanning] = useState(false);
@@ -89,9 +89,9 @@ const QrCodeReader = ({ result, setResult }) => {
     };
 
     const handleImageUpload = (event) => {
-        setResult('');
         const file = event.target.files[0];
         if (file) {
+            setResult('');
             const previewUrl = URL.createObjectURL(file);
             setImagePreview(previewUrl);
             setIsPreviewVisible(false);
@@ -133,7 +133,7 @@ const QrCodeReader = ({ result, setResult }) => {
 
     return (
         <div className="space-y-4">
-            <div>
+            <div className="hidden">
                 <label htmlFor="cameraSelect" className="block mb-2 font-medium text-gray-700">Select Camera:</label>
                 <select
                     id="cameraSelect"
@@ -148,6 +148,8 @@ const QrCodeReader = ({ result, setResult }) => {
                         </option>
                     ))}
                 </select>
+            </div>
+            <div>
                 <button
                     onClick={isScanning ? stopScanning : startScanning}
                     className={`mt-2 px-4 py-2 rounded text-white ${isScanning ? 'bg-red-500' : 'bg-blue-500'} hover:${isScanning ? 'bg-red-600' : 'bg-blue-600'}`}

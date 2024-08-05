@@ -26,7 +26,7 @@ export default function HealthPage() {
         <div className="p-8">
             <h1>Health Content</h1>
             <h2>QR Code Reader</h2>
-            <QrCodeReader result={result} setResult={setResult} />
+            <QrCodeReader setResult={setResult} />
             <div>
                 <h2 className="text-xl font-semibold">Scanned Result:</h2>
                 <p className="mt-2 text-lg">{result}</p>

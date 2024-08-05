@@ -98,39 +98,53 @@ const DataTableComponent = ({ id }) => {
     });
 
 
-    const addotm = (e) => {
+    const addotm = async (e) => {
         e.preventDefault();
 
-        fetch(`${config.apiUrl}/historials/create`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                hospitals_id: hospitals_id,
-                inventories_id: newotmItemId,
-                servicio: servicio,
-                problema: problema,
-                fecha_open: dateTimePeru,
-                estado: 'open',
-                usersid_open: users_id,
-            }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    alert('Error al agregar OTM. Intente denuevo');
-                    throw Error('Error adding OTM');
-                }
-                return response.json();
-            })
-            .then(() => {
-                closeNewotmModal();
-                fetchHistoryData(); // Fetch updated history data
-            })
-            .catch(error => {
-                console.error('Error adding OTM:', error);
+        // Close the modal immediately to improve responsiveness
+        closeNewotmModal();
+
+        const newEntry = {
+            fecha_open: dateTimePeru,
+            problema: problema,
+            solucion: '',
+            estado: 'open'
+        };
+
+        // Optimistically update the table
+        setHistoryData(prevData => [...prevData, newEntry]);
+
+        try {
+            const response = await fetch(`${config.apiUrl}/historials/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    hospitals_id: hospitals_id,
+                    inventories_id: newotmItemId,
+                    servicio: servicio,
+                    problema: problema,
+                    fecha_open: dateTimePeru,
+                    estado: 'open',
+                    usersid_open: users_id,
+                }),
             });
+
+            if (!response.ok) {
+                alert('Error al agregar OTM. Intente denuevo');
+                throw Error('Error adding OTM');
+            }
+
+            const data = await response.json();
+
+            // Fetch updated history data
+            fetchHistoryData();
+        } catch (error) {
+            console.error('Error adding OTM:', error);
+        }
     };
+
 
     // Check if the details and historyData have been set. If not, still loading.
     if (!item || !historyData) return <div>Loading...</div>;

@@ -102,7 +102,7 @@ const DataTableComponent = ({ items = [], setItems }) => {
         openNewotmModal(item);
     };
 
-    /* open and close modal for EDIT ITEM */
+    /* open and close modal for NEWOTM ITEM */
     const openNewotmModal = (item) => {
         setNewotmItemId(item._id);
         setNewotmName(item.name);

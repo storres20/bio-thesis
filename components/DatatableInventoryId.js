@@ -83,7 +83,8 @@ const DataTableComponent = ({ id }) => {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
-        timeZone: 'America/Lima'
+        timeZone: 'America/Lima',
+        hour12: true, // Use AM/PM
     });
 
     const dateTimePeru = new Date().toLocaleString('es-PE', {
@@ -92,8 +93,10 @@ const DataTableComponent = ({ id }) => {
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
-        timeZone: 'America/Lima'
+        timeZone: 'America/Lima',
+        hour12: true, // Use AM/PM
     });
+
 
     const addotm = (e) => {
         e.preventDefault();

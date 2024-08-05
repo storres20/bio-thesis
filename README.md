@@ -3,9 +3,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## Welcome!
 I'm adding some videos documenting the progress of building this health web application
 
-08/04/2024
-https://www.loom.com/share/0108f794ef4b4d7a828fd0108abe7629?sid=9e0b9bd9-cf05-4768-8e93-95c948ea54fa
-
+08/04/2024 [Video link](https://www.loom.com/share/0108f794ef4b4d7a828fd0108abe7629?sid=9e0b9bd9-cf05-4768-8e93-95c948ea54fa)
 
 ## Getting Started
 

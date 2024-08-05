@@ -1,8 +1,8 @@
+// components/QrCodeReader.js
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 
-const QrCodeReader = () => {
-    const [result, setResult] = useState('');
+const QrCodeReader = ({ result, setResult }) => {
     const [cameraId, setCameraId] = useState('');
     const [cameras, setCameras] = useState([]);
     const [isScanning, setIsScanning] = useState(false);
@@ -10,8 +10,7 @@ const QrCodeReader = () => {
     const [imagePreview, setImagePreview] = useState(null);
     const [isPreviewVisible, setIsPreviewVisible] = useState(false);
     const scannerRef = useRef(null);
-
-    const fileInputRef = useRef(null); // Ref for file input
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         const fetchCameras = async () => {
@@ -19,7 +18,7 @@ const QrCodeReader = () => {
                 const devices = await Html5Qrcode.getCameras();
                 setCameras(devices);
                 if (devices.length > 0) {
-                    setCameraId(devices[0].id); // Default to the first camera
+                    setCameraId(devices[0].id);
                 }
             } catch (error) {
                 console.error('Error fetching cameras:', error);
@@ -40,29 +39,25 @@ const QrCodeReader = () => {
             qrbox: 250,
         };
 
-        //setImagePreview(null)
-        setIsPreviewVisible(false)
+        setIsPreviewVisible(false);
 
         const newScanner = new Html5Qrcode("reader");
         scannerRef.current = newScanner;
 
         newScanner.start(
-            { facingMode: 'environment' }, // Default to the back camera
+            { facingMode: 'environment' },
             config,
             (decodedText) => {
                 setResult(decodedText);
-                stopScanning(); // Stop scanning after successful result
-
-                //setImagePreview(null) // hide image preview button
-                //setIsPreviewVisible(true)
-                fileInputRef.current.value = ''; // Clear the file input value
+                stopScanning();
+                fileInputRef.current.value = '';
             },
             (errorMessage) => {
                 console.error(`QR Code no longer in front of camera. Error: ${errorMessage}`);
             }
         ).then(() => {
             if (videoElement) {
-                videoElement.style.transform = 'scaleX(-1)'; // Apply mirror effect
+                videoElement.style.transform = 'scaleX(-1)';
             }
         }).catch((error) => {
             console.error('Error starting scanner:', error);
@@ -78,14 +73,13 @@ const QrCodeReader = () => {
                 console.log('Scanner stopped');
                 setIsScanning(false);
 
-                // Clean up video element if necessary
                 if (videoElement) {
                     const tracks = videoElement.srcObject?.getTracks();
                     if (tracks) {
                         tracks.forEach(track => track.stop());
                     }
                 }
-                scannerRef.current = null; // Clear the reference
+                scannerRef.current = null;
             } catch (error) {
                 console.error('Error stopping scanner:', error);
             }
@@ -95,19 +89,19 @@ const QrCodeReader = () => {
     };
 
     const handleImageUpload = (event) => {
-        setResult(''); // Clear the result before starting a new scan
+        setResult('');
         const file = event.target.files[0];
         if (file) {
             const previewUrl = URL.createObjectURL(file);
-            setImagePreview(previewUrl); // Set image preview URL
-            setIsPreviewVisible(false) // Show preview image
+            setImagePreview(previewUrl);
+            setIsPreviewVisible(false);
             const newScanner = new Html5Qrcode("reader");
             scannerRef.current = newScanner;
 
             newScanner.scanFile(file, true)
                 .then(decodedText => {
                     setResult(decodedText);
-                    stopScanning(); // Stop scanning after successful result
+                    stopScanning();
                 })
                 .catch(err => {
                     console.error('Error decoding image:', err);
@@ -121,7 +115,6 @@ const QrCodeReader = () => {
     };
 
     useEffect(() => {
-        // Watch for changes to the video element and apply mirror effect
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.target.tagName === 'VIDEO') {
@@ -171,7 +164,7 @@ const QrCodeReader = () => {
                     onChange={handleImageUpload}
                     disabled={isScanning}
                     className="border border-gray-300 rounded p-2"
-                    ref={fileInputRef} // Attach ref
+                    ref={fileInputRef}
                 />
                 {imagePreview && (
                     <button
@@ -184,10 +177,10 @@ const QrCodeReader = () => {
             </div>
 
             <div id="reader" className={`w-auto max-w-lg mx-auto relative ${isPreviewVisible ? 'hidden' : ''}`}></div>
-            <div>
+            {/*<div>
                 <h2 className="text-xl font-semibold">Result:</h2>
                 <p className="mt-2 text-lg">{result}</p>
-            </div>
+            </div>*/}
         </div>
     );
 };

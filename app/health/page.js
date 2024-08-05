@@ -1,13 +1,22 @@
 // app/health/page.js
 'use client'
 
-import { setCookie, parseCookies, destroyCookie } from 'nookies';
+import dynamic from 'next/dynamic';
+import { parseCookies } from 'nookies';
+import { useState } from 'react';
 import QrCodeReader from '@/components/QrCodeReader';
 
-export default function HealthPage() {
+// Dynamic Import
+const DataTableComponent = dynamic(
+    () => import('@/components/DatatableInventoryId'),
+    { ssr: false }
+);
 
+export default function HealthPage() {
     const cookies = parseCookies();
-    const profile = cookies.profile
+    const profile = cookies.profile;
+
+    const [result, setResult] = useState('');
 
     if (profile !== 'HEALTH' && profile !== 'ADMIN') {
         return <p>You do not have access to this page.</p>;
@@ -15,11 +24,17 @@ export default function HealthPage() {
 
     return (
         <div className="p-8">
-            {/* Import and use other components here */}
             <h1>Health Content</h1>
-
             <h2>QR Code Reader</h2>
-            <QrCodeReader/>
+            <QrCodeReader result={result} setResult={setResult} />
+            <div>
+                <h2 className="text-xl font-semibold">Scanned Result:</h2>
+                <p className="mt-2 text-lg">{result}</p>
+            </div>
+            {/* DataTable*/}
+            {result && (
+                <DataTableComponent id={result}/>
+            )}
         </div>
     );
 }

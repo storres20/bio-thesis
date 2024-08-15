@@ -94,7 +94,7 @@ const QrCodeReader = ({ setResult }) => {
             setResult('');
             const previewUrl = URL.createObjectURL(file);
             setImagePreview(previewUrl);
-            setIsPreviewVisible(false);
+            setIsPreviewVisible(true);
             const newScanner = new Html5Qrcode("reader");
             scannerRef.current = newScanner;
 
@@ -168,14 +168,14 @@ const QrCodeReader = ({ setResult }) => {
                     className="border border-gray-300 rounded p-2"
                     ref={fileInputRef}
                 />
-                {imagePreview && (
+                {/*{imagePreview && (
                     <button
                         onClick={togglePreview}
                         className={`px-4 py-2 rounded text-white ${isPreviewVisible ? 'bg-green-500' : 'bg-gray-500'} hover:${isPreviewVisible ? 'bg-gray-600' : 'bg-green-600'}`}
                     >
                         {isPreviewVisible ? 'Show Preview' : 'Hide Preview'}
                     </button>
-                )}
+                )}*/}
             </div>
 
             <div id="reader" className={`w-auto max-w-lg mx-auto relative ${isPreviewVisible ? 'hidden' : ''}`}></div>

@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+/*import { useRouter } from 'next/navigation';*/
 
 import config from '@/config'; //for apiUrl
 
@@ -22,7 +22,7 @@ const OtmPage = () => {
     const hospitals_id = cookies.hospitals_id
     //console.log(hospitals_id)
 
-    const router = useRouter();
+    /*const router = useRouter();*/
 
     const [items, setItems] = useState([]);
 
@@ -52,15 +52,15 @@ const OtmPage = () => {
             .catch(error => console.error('Error fetching items:', error));
     };
 
-    const newotm = () => {
+    /*const newotm = () => {
       router.push('/health/newotm')
-    }
+    }*/
 
 
     return (
         <div className="p-8">
             <h1 className="text-2xl mb-6">OTM</h1>
-            <button onClick={newotm} className="bg-blue-500 text-white p-2 rounded">New OTM</button>
+            {/*<button onClick={newotm} className="bg-blue-500 text-white p-2 rounded">New OTM</button>*/}
 
             {/* DataTable*/}
             <DataTableComponent items={items}/>

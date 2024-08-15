@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 /* DataTable */
 // Dynamic Import
 const DataTableComponent = dynamic(
-    () => import('@/components/DatatableInventoryId'),
+    () => import('@/components/DatatableInventoryId/DatatableInventoryId'),
     { ssr: false }
 );
 /************************/

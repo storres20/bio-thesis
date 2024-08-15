@@ -82,16 +82,16 @@ const InventoryPage = () => {
         setModalOpen(false);
     }
 
-    const openModal = () => {
+    /*const openModal = () => {
         setModalOpen(true);
-    }
+    }*/
     /* ******* */
 
 
     return (
         <div className="p-8">
             <h1 className="text-2xl mb-6">Inventory</h1>
-            <button onClick={openModal} className="bg-blue-500 text-white p-2 rounded">Add Item</button>
+            {/*<button onClick={openModal} className="bg-blue-500 text-white p-2 rounded">Add Item</button>*/}
 
             {/* ADD ITEM modal */}
             {modalOpen && (

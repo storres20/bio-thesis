@@ -124,7 +124,8 @@ const DataTableComponent = ({ items = [], setItems }) => {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
-        timeZone: 'America/Lima'
+        timeZone: 'America/Lima',
+        hour12: false, // Don't Use AM/PM
     });
 
     const dateTimePeru = new Date().toLocaleString('es-PE', {
@@ -133,7 +134,8 @@ const DataTableComponent = ({ items = [], setItems }) => {
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
-        timeZone: 'America/Lima'
+        timeZone: 'America/Lima',
+        hour12: false, // Don't Use AM/PM
     });
 
     const addotm = (e) => {
@@ -403,18 +405,18 @@ const DataTableComponent = ({ items = [], setItems }) => {
                             <td className="px-6 py-4 whitespace-nowrap">{item.location}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{item.codepat}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button onClick={() => newOtm(item)}
+                                {/*<button onClick={() => newOtm(item)}
                                         className="text-indigo-600 hover:text-indigo-900 m-1">NewOtm
-                                </button>
+                                </button>*/}
                                 <button onClick={() => viewItem(item._id)}
                                         className="text-indigo-600 hover:text-indigo-900 m-1">View
                                 </button>
-                                <button onClick={() => editItem(item)}
+                                {/*<button onClick={() => editItem(item)}
                                         className="text-indigo-600 hover:text-indigo-900 m-1">Edit
                                 </button>
                                 <button onClick={() => deleteItem(item._id)}
                                         className="text-red-600 hover:text-red-900 m-1">Delete
-                                </button>
+                                </button>*/}
                             </td>
                         </tr>
                     ))}

@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import {useEffect, useState} from 'react';
 import { setCookie, parseCookies, destroyCookie } from 'nookies';
 
 export default function Home() {
@@ -11,15 +11,23 @@ export default function Home() {
     const hospitals_name = cookies.hospitals_name
     const profile = cookies.profile
 
+    const [isHydrated, setIsHydrated] = useState(false);
+
+    useEffect(() => {
+        setIsHydrated(true);
+    }, []);
+
     return (
-        <main className="p-8">
+        isHydrated && (
+            <main className="p-8">
 
-            <h1>Welcome!!</h1>
-            <p>user id : {users_id}</p>
-            <p>hospital id : {hospitals_id}</p>
-            <p>hospital name : {hospitals_name}</p>
-            <p>profile : {profile}</p>
+                <h1>Welcome!!</h1>
+                <p>user id : {users_id}</p>
+                <p>hospital id : {hospitals_id}</p>
+                <p>hospital name : {hospitals_name}</p>
+                <p>profile : {profile}</p>
 
-        </main>
+            </main>
+        )
     );
 }

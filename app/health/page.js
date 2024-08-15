@@ -3,12 +3,12 @@
 
 import dynamic from 'next/dynamic';
 import { parseCookies } from 'nookies';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import QrCodeReader from '@/components/QrCodeReader';
 
 // Dynamic Import
 const DataTableComponent = dynamic(
-    () => import('@/components/DatatableInventoryId'),
+    () => import('@/components/DatatableInventoryId/DatatableInventoryId'),
     { ssr: false }
 );
 
@@ -17,10 +17,20 @@ export default function HealthPage() {
     const profile = cookies.profile;
 
     const [result, setResult] = useState('');
+    const [hydrated, setHydrated] = useState(false);
+
+    useEffect(() => {
+        setHydrated(true);
+    }, []);
+
+    if (!hydrated) {
+        return null; // or a loading indicator
+    }
 
     if (profile !== 'HEALTH' && profile !== 'ADMIN') {
         return <p>You do not have access to this page.</p>;
     }
+
 
     return (
         <div className="p-8">

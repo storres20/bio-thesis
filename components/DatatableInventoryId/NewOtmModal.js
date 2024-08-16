@@ -2,16 +2,15 @@ import React, { useState, useRef } from 'react';
 import { uploadFile } from '@/firebase/config';
 import config from '@/config';
 import { parseCookies } from 'nookies';
-//import { v4 as uuidv4 } from 'uuid';
 import Webcam from 'react-webcam';
-import {v4} from "uuid";
+import { v4 } from 'uuid';
 
 const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
     const [problema, setProblema] = useState('');
-    const [image, setImage] = useState(''); // Save image URL
+    const [images, setImages] = useState([]); // Save multiple image URLs
     const [visible, setVisible] = useState(true);
     const [capturing, setCapturing] = useState(false);
-    const [capturedImage, setCapturedImage] = useState('');
+    const [cameraOpen, setCameraOpen] = useState(false); // State to control camera visibility
 
     const webcamRef = useRef(null);
 
@@ -31,17 +30,16 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
 
     const capture = async () => {
         const imageSrc = webcamRef.current.getScreenshot();
-        setCapturedImage(imageSrc);
+        const blob = await (await fetch(imageSrc)).blob();
+        const file = new File([blob], `${v4()}.jpg`, { type: 'image/jpeg' });
+        const result = await uploadFile(file);
+        setImages((prevImages) => [...prevImages, result]); // Add new image URL to the array
     };
 
     const addotm = async (e) => {
         e.preventDefault();
 
         try {
-            const blob = await (await fetch(capturedImage)).blob();
-            const file = new File([blob], `${v4()}.jpg`, { type: 'image/jpeg' });
-            const result = await uploadFile(file);
-            setImage(result);
             alert('All fields are correct');
             setVisible(false);
         } catch (error) {
@@ -66,7 +64,7 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
                     fecha_open: dateTimePeru,
                     estado: 'open',
                     usersid_open: users_id,
-                    image: image,
+                    images: images, // Send the array of image URLs
                 }),
             });
 
@@ -82,6 +80,15 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
         } catch (error) {
             console.error('Error adding OTM:', error);
         }
+    };
+
+    const handleOpenCamera = () => {
+        setCameraOpen(true);
+    };
+
+    const handleCloseCamera = () => {
+        setCameraOpen(false);
+        setCapturing(false);
     };
 
     const handleClose = () => {
@@ -170,42 +177,58 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
                             required
                         />
                     </div>
-                    {/* Firebase storage image */}
+                    {/* Firebase storage images */}
                     <div className="mb-4">
-                        <label htmlFor="image">
-                            <b>Image</b>
+                        <label htmlFor="images">
+                            <b>Images</b>
                         </label>
-                        {!capturing ? (
-                            <>
-                                <Webcam
-                                    audio={false}
-                                    ref={webcamRef}
-                                    screenshotFormat="image/jpeg"
-                                    className="w-full h-64 border rounded mb-4"
-                                />
+                        <div className="mb-4">
+                            {cameraOpen ? (
+                                <>
+                                    <Webcam
+                                        audio={false}
+                                        ref={webcamRef}
+                                        screenshotFormat="image/jpeg"
+                                        className="w-full h-64 border rounded mb-4"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={capture}
+                                        className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 mr-2"
+                                    >
+                                        Capture Image
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleCloseCamera}
+                                        className="bg-red-500 text-white py-2 rounded hover:bg-red-600"
+                                    >
+                                        Close Camera
+                                    </button>
+                                </>
+                            ) : (
                                 <button
                                     type="button"
-                                    onClick={() => {
-                                        setCapturing(true);
-                                        capture();
-                                    }}
-                                    className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+                                    onClick={handleOpenCamera}
+                                    className="bg-green-500 text-white py-2 rounded hover:bg-green-600"
                                 >
-                                    Capture Image
+                                    Open Camera
                                 </button>
-                            </>
-                        ) : (
-                            <div>
-                                <img src={capturedImage} alt="Captured" className="w-full h-64 border rounded mb-4" />
-                                <button
-                                    type="button"
-                                    onClick={() => setCapturing(false)}
-                                    className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-                                >
-                                    Retake
-                                </button>
+                            )}
+                        </div>
+                        <div className="mb-4">
+                            <label>Captured Images:</label>
+                            <div className="flex flex-wrap gap-4">
+                                {images.map((img, index) => (
+                                    <img
+                                        key={index}
+                                        src={img}
+                                        alt={`Captured ${index + 1}`}
+                                        className="w-32 h-32 border rounded"
+                                    />
+                                ))}
                             </div>
-                        )}
+                        </div>
                     </div>
                     {/*************************/}
                     <button

@@ -58,7 +58,8 @@ const DataTableComponent = ({ items = [] }) => {
 
     const handleView = (item) => {
         // Handle view logic here
-        console.log(item._id)
+        //console.log(item._id)
+        router.push(`/health/otm/${item._id}`)
     };
 
     return (

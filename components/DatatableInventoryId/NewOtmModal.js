@@ -9,7 +9,6 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
     const [problema, setProblema] = useState('');
     const [images, setImages] = useState([]); // Save multiple image URLs
     const [visible, setVisible] = useState(true);
-    const [capturing, setCapturing] = useState(false);
     const [cameraOpen, setCameraOpen] = useState(false); // State to control camera visibility
 
     const webcamRef = useRef(null);
@@ -34,6 +33,10 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
         const file = new File([blob], `${v4()}.jpg`, { type: 'image/jpeg' });
         const result = await uploadFile(file);
         setImages((prevImages) => [...prevImages, result]); // Add new image URL to the array
+    };
+
+    const removeImage = (index) => {
+        setImages(images.filter((_, i) => i !== index)); // Remove image by index
     };
 
     const addotm = async (e) => {
@@ -88,7 +91,6 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
 
     const handleCloseCamera = () => {
         setCameraOpen(false);
-        setCapturing(false);
     };
 
     const handleClose = () => {
@@ -210,7 +212,7 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
                                 <button
                                     type="button"
                                     onClick={handleOpenCamera}
-                                    className="bg-green-500 text-white py-2 rounded hover:bg-green-600"
+                                    className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
                                 >
                                     Open Camera
                                 </button>
@@ -220,12 +222,20 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
                             <label>Captured Images:</label>
                             <div className="flex flex-wrap gap-4">
                                 {images.map((img, index) => (
-                                    <img
-                                        key={index}
-                                        src={img}
-                                        alt={`Captured ${index + 1}`}
-                                        className="w-32 h-32 border rounded"
-                                    />
+                                    <div key={index} className="relative">
+                                        <img
+                                            src={img}
+                                            alt={`Captured ${index + 1}`}
+                                            className="w-32 h-32 border rounded"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeImage(index)}
+                                            className="absolute top-0 right-0 bg-black text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                                        >
+                                            X
+                                        </button>
+                                    </div>
                                 ))}
                             </div>
                         </div>

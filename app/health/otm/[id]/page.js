@@ -13,6 +13,7 @@ const OtmDetails = ({ params }) => {
     /* State to hold fetched data */
     const [data, setData] = useState([]);
     const [oneData, setOneData] = useState(null);
+    const [historialData, setHistorialData] = useState(null); // New state for additional fetch
 
     /* Fetch data when component mounts */
     useEffect(() => {
@@ -20,7 +21,6 @@ const OtmDetails = ({ params }) => {
             try {
                 const response = await fetch(`${config.apiUrl}/historialbyids/getByHistorial/${id}`);
                 const result = await response.json();
-                //console.log(result);
 
                 // Ensure that result is an array before setting it
                 if (Array.isArray(result)) {
@@ -32,7 +32,6 @@ const OtmDetails = ({ params }) => {
                     });
                     setData(sortedData);
                     setOneData(sortedData[0]);
-                    //console.log(sortedData[0]);
                 } else {
                     setData([]); // Set to an empty array if result is not an array
                 }
@@ -42,7 +41,20 @@ const OtmDetails = ({ params }) => {
             }
         };
 
+        const fetchHistorialData = async () => {
+            try {
+                const response = await fetch(`${config.apiUrl}/historials/${id}`);
+                const result = await response.json();
+                setHistorialData(result);
+                console.log(result)
+            } catch (error) {
+                console.error('Error fetching historial data:', error);
+            }
+        };
+
         fetchData();
+        fetchHistorialData(); // Fetch additional data
+
     }, [id]);
 
     /* Parse date string in 'DD/MM/YYYY, HH:MM' format */
@@ -64,25 +76,27 @@ const OtmDetails = ({ params }) => {
 
             <button onClick={returnBack} className="bg-red-500 text-white p-2 rounded mb-4">Return back</button>
 
-            {/* Check if oneData and oneData.historials_id exist before accessing estado */}
-            {oneData && oneData.historials_id && (
+            {/* Check if historialData exist before accessing estado */}
+            {historialData && (
                 <div>
-                    <p>Fecha de Solicitud: {oneData.historials_id.fecha_open}</p>
-                    <p className={`whitespace-nowrap ${oneData.historials_id.estado === 'open' ? 'text-blue-500' : oneData.historials_id.estado === 'close' ? 'text-red-500' : 'text-black'} `}>
-                        Estado: {oneData.historials_id.estado}
+                    <p>Fecha de Solicitud: {historialData.fecha_open}</p>
+                    <p className={`whitespace-nowrap ${historialData.estado === 'open' ? 'text-blue-500' : historialData.estado === 'close' ? 'text-red-500' : 'text-black'} `}>
+                        Estado: {historialData.estado}
                     </p>
-                    <p>Problema: {oneData.historials_id.problema}</p>
-                    <p>Open by: {oneData.historials_id.usersid_open.email}</p>
-                    <p>Assinged Tech: {oneData.users_id.email}</p>
+                    <p><b>Problema: {historialData.problema}</b></p>
+                    <p>Open by: {historialData.usersid_open.email}</p>
+
+                    <p><b>Assigned Tech: {oneData && oneData.historials_id && oneData.users_id ? oneData.users_id.email : 'Is Pending'}</b></p>
+
                     <br/>
                     <p>Equipo</p>
-                    <p>Nombre: {oneData.historials_id.inventories_id.name}</p>
-                    <p>Marca: {oneData.historials_id.inventories_id.brand}</p>
-                    <p>Modelo: {oneData.historials_id.inventories_id.model}</p>
-                    <p>Serie: {oneData.historials_id.inventories_id.serie}</p>
-                    <p>Codepat: {oneData.historials_id.inventories_id.codepat}</p>
-                    <p>Location: {oneData.historials_id.inventories_id.location}</p>
-                    <p>Sub Location: {oneData.historials_id.inventories_id.sub_location}</p>
+                    <p>Nombre: {historialData.inventories_id.name}</p>
+                    <p>Marca: {historialData.inventories_id.brand}</p>
+                    <p>Modelo: {historialData.inventories_id.model}</p>
+                    <p>Serie: {historialData.inventories_id.serie}</p>
+                    <p>Codepat: {historialData.inventories_id.codepat}</p>
+                    <p>Location: {historialData.inventories_id.location}</p>
+                    <p>Sub Location: {historialData.inventories_id.sub_location}</p>
                     <br/>
                 </div>
             )}

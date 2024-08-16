@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { uploadFile } from '@/firebase/config';
-import config from '@/config'; // for apiUrl
+import config from '@/config';
 import { parseCookies } from 'nookies';
+//import { v4 as uuidv4 } from 'uuid';
+import Webcam from 'react-webcam';
+import {v4} from "uuid";
 
 const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
     const [problema, setProblema] = useState('');
-    const [file, setFile] = useState(null); // setFile for Firebase
-    const [preview, setPreview] = useState(''); // setPreview for image preview
-    const [image, setImage] = useState(''); // save image URL
+    const [image, setImage] = useState(''); // Save image URL
     const [visible, setVisible] = useState(true);
+    const [capturing, setCapturing] = useState(false);
+    const [capturedImage, setCapturedImage] = useState('');
+
+    const webcamRef = useRef(null);
 
     const cookies = parseCookies();
     const users_id = cookies.users_id;
@@ -24,10 +29,17 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
         hour12: false,
     });
 
+    const capture = async () => {
+        const imageSrc = webcamRef.current.getScreenshot();
+        setCapturedImage(imageSrc);
+    };
+
     const addotm = async (e) => {
         e.preventDefault();
 
         try {
+            const blob = await (await fetch(capturedImage)).blob();
+            const file = new File([blob], `${v4()}.jpg`, { type: 'image/jpeg' });
             const result = await uploadFile(file);
             setImage(result);
             alert('All fields are correct');
@@ -72,21 +84,6 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
         }
     };
 
-    const handleFileChange = (event) => {
-        const selectedFile = event.target.files[0];
-        setFile(selectedFile);
-        if (selectedFile) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreview(reader.result);
-            };
-            reader.readAsDataURL(selectedFile);
-        } else {
-            setPreview('');
-        }
-    };
-
-    // Modified onClose function
     const handleClose = () => {
         setProblema(''); // Clear the problema input
         onClose(); // Close the modal
@@ -177,14 +174,38 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
                     <div className="mb-4">
                         <label htmlFor="image">
                             <b>Image</b>
-                            <input
-                                type="file"
-                                name="image"
-                                id="image"
-                                onChange={handleFileChange}
-                                required
-                            />
                         </label>
+                        {!capturing ? (
+                            <>
+                                <Webcam
+                                    audio={false}
+                                    ref={webcamRef}
+                                    screenshotFormat="image/jpeg"
+                                    className="w-full h-64 border rounded mb-4"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setCapturing(true);
+                                        capture();
+                                    }}
+                                    className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+                                >
+                                    Capture Image
+                                </button>
+                            </>
+                        ) : (
+                            <div>
+                                <img src={capturedImage} alt="Captured" className="w-full h-64 border rounded mb-4" />
+                                <button
+                                    type="button"
+                                    onClick={() => setCapturing(false)}
+                                    className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+                                >
+                                    Retake
+                                </button>
+                            </div>
+                        )}
                     </div>
                     {/*************************/}
                     <button

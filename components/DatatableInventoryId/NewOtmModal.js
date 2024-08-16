@@ -95,6 +95,10 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
 
     const handleClose = () => {
         setProblema(''); // Clear the problema input
+        setImages([]); // Clear images when modal is closed
+        if (cameraOpen) {
+            handleCloseCamera(); // Close camera if it was open
+        }
         onClose(); // Close the modal
     };
 
@@ -192,6 +196,9 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
                                         ref={webcamRef}
                                         screenshotFormat="image/jpeg"
                                         className="w-full h-64 border rounded mb-4"
+                                        videoConstraints={{
+                                            facingMode: 'environment' // Open back camera by default on mobile
+                                        }}
                                     />
                                     <button
                                         type="button"

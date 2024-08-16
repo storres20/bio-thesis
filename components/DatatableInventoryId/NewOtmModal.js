@@ -38,7 +38,8 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
     };
 
     const handleFinish = async () => {
-        onClose();
+        onClose(); // Close the modal
+        setProblema(''); // Clear the problema input
 
         try {
             const response = await fetch(`${config.apiUrl}/historials/create`, {
@@ -53,7 +54,7 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
                     fecha_open: dateTimePeru,
                     estado: 'open',
                     usersid_open: users_id,
-                    image: image
+                    image: image,
                 }),
             });
 
@@ -85,12 +86,18 @@ const NewOtmModal = ({ isOpen, onClose, item, fetchHistoryData }) => {
         }
     };
 
+    // Modified onClose function
+    const handleClose = () => {
+        setProblema(''); // Clear the problema input
+        onClose(); // Close the modal
+    };
+
     if (!isOpen) return null;
 
     return (
         <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-70 z-50 overflow-y-auto">
             <div className="p-8 bg-white rounded-lg shadow-lg m-4 sm:m-8 lg:w-1/2 max-h-screen overflow-y-auto mt-4 md:mt-12">
-                <button onClick={onClose} className="float-right text-gray-500 hover:text-gray-700">✖️</button>
+                <button onClick={handleClose} className="float-right text-gray-500 hover:text-gray-700">✖️</button>
                 <form onSubmit={addotm}>
                     <p>NEW OTM modal</p>
                     <div className="mb-4">

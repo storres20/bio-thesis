@@ -3,12 +3,16 @@ import 'datatables.net';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
 import config from '@/config'; // for apiUrl
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import NewOtmModal from './NewOtmModal';
 
 const DataTableComponent = ({ id }) => {
     const [item, setItem] = useState(null);
     const [historyData, setHistoryData] = useState(null);
     const [newotmModalOpen, setNewotmModalOpen] = useState(false);
+
+    /* Router */
+    const router = useRouter();
 
     const fetchHistoryData = async () => {
         try {
@@ -107,12 +111,19 @@ const DataTableComponent = ({ id }) => {
     }, [historyData]);
 
     const newOtm = () => {
-        setNewotmModalOpen(true);
+        const allClosed = historyData.every(entry => entry.estado.toLowerCase() === 'close');
+
+        if (allClosed) {
+            setNewotmModalOpen(true);
+        } else {
+            alert('Not all items are closed.');
+        }
     };
 
     const handleView = (item) => {
         // Handle view logic here
-        console.log(item._id);
+        //console.log(item._id);
+        router.push(`/health/otm/${item._id}`)
     };
 
     return (

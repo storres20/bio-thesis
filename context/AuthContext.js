@@ -51,6 +51,7 @@ export const AuthProvider = ({ children }) => {
             setCookie(null, 'hospitals_name', login_user.hospitals_id.name, { maxAge: 30 * 24 * 60 * 60, path: '/' });
             setCookie(null, 'hospitals_id', login_user.hospitals_id._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
             setCookie(null, 'profile', login_user.profile, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+            setCookie(null, 'location', login_user.location, { maxAge: 30 * 24 * 60 * 60, path: '/' });
         } else {
             // The user was not found
             console.log("No user matching the provided email and password was found")
@@ -99,6 +100,7 @@ export const AuthProvider = ({ children }) => {
         setCookie(null, 'hospitals_name', data.hospitals_id.name, { maxAge: 30 * 24 * 60 * 60, path: '/' });
         setCookie(null, 'hospitals_id', data.hospitals_id._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
         setCookie(null, 'profile', data.profile, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+        setCookie(null, 'location', data.location, { maxAge: 30 * 24 * 60 * 60, path: '/' });
 
         alert('Successfully register')
         router.push('/'); // Redirect to inventory page after registration
@@ -110,6 +112,7 @@ export const AuthProvider = ({ children }) => {
         destroyCookie(null, 'hospitals_id');
         destroyCookie(null, 'hospitals_name');
         destroyCookie(null, 'profile');
+        destroyCookie(null, 'location');
         setIsAuthenticated(false);
         router.push('/login');
     };

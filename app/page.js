@@ -10,6 +10,7 @@ export default function Home() {
     const hospitals_id = cookies.hospitals_id
     const hospitals_name = cookies.hospitals_name
     const profile = cookies.profile
+    const location = cookies.location
 
     const [isHydrated, setIsHydrated] = useState(false);
 
@@ -26,6 +27,7 @@ export default function Home() {
                 <p>hospital id : {hospitals_id}</p>
                 <p>hospital name : {hospitals_name}</p>
                 <p>profile : {profile}</p>
+                <p>location : {location}</p>
 
             </main>
         )

@@ -98,18 +98,42 @@ const OtmDetails = ({ params }) => {
                     <p>Location: {historialData.inventories_id.location}</p>
                     <p>Sub Location: {historialData.inventories_id.sub_location}</p>
                     <br/>
+
+                    {/* Preview images section */}
+                    {historialData.images && historialData.images.length > 0 && (
+                        <div>
+                            <p>Preview Images:</p>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {historialData.images.map((image, index) => (
+                                    <div key={index} className="relative">
+                                        <img
+                                            src={image}
+                                            alt={`Preview ${index + 1}`}
+                                            className="object-cover w-full h-32 cursor-pointer border-2 border-gray-300 rounded"
+                                            onClick={() => window.open(image, '_blank')}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
 
-            <div className="grid grid-cols-1 gap-4">
-                {data.map(item => (
-                    <div key={item._id} className="bg-gray-100 border-slate-300 border-solid border-2 shadow-md p-4 rounded-lg">
-                        <h2 className="text-xl font-bold mb-2">otm id: {item._id}</h2>
-                        <p>note: {item.note}</p>
-                        <p className="text-gray-500 text-sm mt-2">Date: {item.fecha}</p>
-                    </div>
-                ))}
-            </div>
+            {oneData && (
+                <div className="grid grid-cols-1 gap-4 pt-5">
+                    <p>Historials of attention:</p>
+                    {data.map(item => (
+                        <div key={item._id}
+                             className="bg-gray-100 border-slate-300 border-solid border-2 shadow-md p-4 rounded-lg">
+                            <h2 className="text-xl font-bold mb-2">otm id: {item._id}</h2>
+                            <p>note: {item.note}</p>
+                            <p className="text-gray-500 text-sm mt-2">Date: {item.fecha}</p>
+                        </div>
+                    ))}
+                </div>
+            )}
+
         </div>
     )
 }

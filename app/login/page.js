@@ -3,27 +3,36 @@
 import {useEffect, useState} from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+/* Loader */
+import Loader from '@/components/Loader'
 
 const LoginPage = () => {
 
+    /* Initialization */
     const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    /* Loader */
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setLoading(true); // Loader
 
         try {
             login(email, password);
         } catch (err) {
             setError('Invalid email or password');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <div className="flex justify-center items-center h-screen bg-gray-100">
+            {loading && <Loader />}
             <div className="bg-white p-8 rounded shadow-md w-full max-w-sm">
                 <h2 className="text-2xl mb-6 text-center">Login</h2>
                 <form onSubmit={handleSubmit}>

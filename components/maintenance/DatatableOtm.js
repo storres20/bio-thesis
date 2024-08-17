@@ -54,6 +54,7 @@ const DataTableComponent = ({ items = [], fetchItems = null }) => {
     /* Cookies */
     const cookies = parseCookies();
     const usersid_tech = cookies.users_id;
+    const usersid_tech_email = cookies.users_email;
 
     // Sort items by 'fecha_open' in descending order
     const sortedItems = [...items].sort((a, b) => new Date(b.fecha_open) - new Date(a.fecha_open));
@@ -62,9 +63,22 @@ const DataTableComponent = ({ items = [], fetchItems = null }) => {
         router.push(`/health/otm/${item._id}`);
     };
 
+    /* for "fecha" */
+    const dateTimePeru = new Date().toLocaleString('es-PE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'America/Lima',
+        hour12: false, // Don't Use AM/PM
+    });
+
+
     const handleAssign = (item) => {
         console.log(item._id);
 
+        // First, update the historial
         fetch(`${config.apiUrl}/historials/${item._id}`, {
             method: 'PATCH',
             headers: {
@@ -88,11 +102,34 @@ const DataTableComponent = ({ items = [], fetchItems = null }) => {
                 if (fetchItems) {
                     fetchItems();
                 }
+
+                // Now, send the POST request to create a new historialbyids record
+                return fetch(`${config.apiUrl}/historialbyids/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        historials_id: item._id,
+                        fecha: dateTimePeru,
+                        note: `asignado a tecnico: ${usersid_tech_email}`
+                    }),
+                });
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to create the historialbyids record.');
+                }
+                return response.json();
+            })
+            .then(newHistorialbyids => {
+                console.log('New historialbyids record created:', newHistorialbyids);
             })
             .catch(error => {
-                console.error('Error updating historial:', error);
+                console.error('Error:', error);
             });
     };
+
 
     return (
         <div className="overflow-x-auto">

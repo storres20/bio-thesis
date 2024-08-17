@@ -6,14 +6,6 @@ import { parseCookies } from 'nookies';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import QrCodeReader from '@/components/QrCodeReader';
-/* Loader */
-import Loader from '@/components/Loader'
-
-// Dynamic Import
-const DataTableComponent = dynamic(
-    () => import('@/components/health/DatatableInventoryId/DatatableInventoryId'),
-    { ssr: false }
-);
 
 export default function HealthPage() {
     const cookies = parseCookies();
@@ -35,8 +27,7 @@ export default function HealthPage() {
     }, [result, router]); // Trigger when result changes
 
     if (!hydrated) {
-        //return null; // or a loading indicator
-        return <Loader />
+        return null; // or a loading indicator
     }
 
     if (profile !== 'HEALTH' && profile !== 'ADMIN') {

@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }) => {
             // The user was found
             console.log(login_user);
             setCookie(null, 'users_id', login_user._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+            setCookie(null, 'users_email', login_user.email, { maxAge: 30 * 24 * 60 * 60, path: '/' });
             setCookie(null, 'hospitals_name', login_user.hospitals_id.name, { maxAge: 30 * 24 * 60 * 60, path: '/' });
             setCookie(null, 'hospitals_id', login_user.hospitals_id._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
             setCookie(null, 'profile', login_user.profile, { maxAge: 30 * 24 * 60 * 60, path: '/' });
@@ -97,6 +98,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
 
         setCookie(null, 'users_id', data._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
+        setCookie(null, 'users_email', data.email, { maxAge: 30 * 24 * 60 * 60, path: '/' });
         setCookie(null, 'hospitals_name', data.hospitals_id.name, { maxAge: 30 * 24 * 60 * 60, path: '/' });
         setCookie(null, 'hospitals_id', data.hospitals_id._id, { maxAge: 30 * 24 * 60 * 60, path: '/' });
         setCookie(null, 'profile', data.profile, { maxAge: 30 * 24 * 60 * 60, path: '/' });
@@ -109,6 +111,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         destroyCookie(null, 'auth-token');
         destroyCookie(null, 'users_id');
+        destroyCookie(null, 'users_email');
         destroyCookie(null, 'hospitals_id');
         destroyCookie(null, 'hospitals_name');
         destroyCookie(null, 'profile');

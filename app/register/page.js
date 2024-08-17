@@ -3,10 +3,13 @@
 import {useEffect, useState} from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-
 import config from '@/config'; //for apiUrl
+/* Loader */
+import Loader from '@/components/Loader'
 
 const RegisterPage = () => {
+
+    /* Initialization */
     const { register } = useAuth();
     const [hospitals_id, setHospitalsId] = useState('');
     const [profile, setProfile] = useState('HEALTH');
@@ -15,6 +18,9 @@ const RegisterPage = () => {
     const [error, setError] = useState('');
 
     const [hospitals, setHospitals] = useState([]);
+
+    /* Loader */
+    const [loading, setLoading] = useState(false);
 
     // Fetch hospitals
     useEffect(() => {
@@ -27,16 +33,20 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setLoading(true); // Loader
 
         try {
             await register(profile, email, password, hospitals_id);
         } catch (err) {
             setError('An error occurred');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <div className="flex justify-center items-center h-screen bg-gray-100">
+            {loading && <Loader />}
             <div className="bg-white p-8 rounded shadow-md w-full max-w-sm">
                 <h2 className="text-2xl mb-6 text-center">Register</h2>
                 <form onSubmit={handleSubmit}>

@@ -1,7 +1,7 @@
 'use client'
 
 import {useEffect, useState} from 'react';
-import { setCookie, parseCookies, destroyCookie } from 'nookies';
+import { parseCookies } from 'nookies';
 
 export default function Home() {
 

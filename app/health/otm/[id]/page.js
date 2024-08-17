@@ -46,7 +46,7 @@ const OtmDetails = ({ params }) => {
                 const response = await fetch(`${config.apiUrl}/historials/${id}`);
                 const result = await response.json();
                 setHistorialData(result);
-                console.log(result)
+                //console.log(result)
             } catch (error) {
                 console.error('Error fetching historial data:', error);
             }
@@ -67,7 +67,8 @@ const OtmDetails = ({ params }) => {
 
     /* Handle return back */
     const returnBack = () => {
-        router.push('/health/otm');
+        //router.push('/health/otm');
+        router.back();
     }
 
     return (

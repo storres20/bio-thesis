@@ -9,7 +9,7 @@ import config from '@/config'; //for apiUrl
 /* DataTable */
 // Dynamic Import
 const DataTableComponent = dynamic(
-    () => import('@/components/DatatableOtm'),
+    () => import('@/components/health/DatatableOtm'),
     { ssr: false }
 );
 /************************/

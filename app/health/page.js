@@ -9,7 +9,7 @@ import QrCodeReader from '@/components/QrCodeReader';
 
 // Dynamic Import
 const DataTableComponent = dynamic(
-    () => import('@/components/DatatableInventoryId/DatatableInventoryId'),
+    () => import('@/components/health/DatatableInventoryId/DatatableInventoryId'),
     { ssr: false }
 );
 

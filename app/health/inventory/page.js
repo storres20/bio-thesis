@@ -8,7 +8,7 @@ import config from '@/config'; //for apiUrl
 /* DataTable */
 // Dynamic Import
 const DataTableComponent = dynamic(
-    () => import('@/components/DatatableInventory'),
+    () => import('@/components/health/DatatableInventory'),
     { ssr: false }
 );
 /************************/

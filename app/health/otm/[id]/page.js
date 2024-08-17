@@ -87,7 +87,10 @@ const OtmDetails = ({ params }) => {
                     <p><b>Problema: {historialData.problema}</b></p>
                     <p>Open by: {historialData.usersid_open.email}</p>
 
-                    <p><b>Assigned Tech: {oneData && oneData.historials_id && oneData.users_id ? oneData.users_id.email : 'Is Pending'}</b></p>
+                    <p><b>Assigned Tech: {historialData.usersid_tech && historialData.usersid_tech.email
+                            ? historialData.usersid_tech.email
+                            : 'Is Pending'}
+                    </b></p>
 
                     <br/>
                     <p>Equipo</p>

@@ -1,7 +1,8 @@
+// @/components/health/DatatableInventoryId/DatatableInventoryId
 import $ from 'jquery';
 import 'datatables.net';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
-import config from '@/config'; // for apiUrl
+import config from '@/config';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NewOtmModal from './NewOtmModal';
@@ -10,21 +11,18 @@ const DataTableComponent = ({ id }) => {
     const [item, setItem] = useState(null);
     const [historyData, setHistoryData] = useState(null);
     const [newotmModalOpen, setNewotmModalOpen] = useState(false);
-
-    /* Router */
     const router = useRouter();
 
     const fetchHistoryData = async () => {
         try {
             const response = await fetch(`${config.apiUrl}/historials/getByInventory/${id}`);
             const data = await response.json();
-
             if (Array.isArray(data)) {
                 data.sort((a, b) => new Date(b.fecha_open) - new Date(a.fecha_open));
                 setHistoryData(data);
             } else {
-                console.error('Expected an array but got:', data);
-                setHistoryData([]); // Set an empty array if data is not an array
+                setHistoryData([]);
+                console.error('Expected array, got:', data);
             }
         } catch (error) {
             console.error('Error fetching history:', error);
@@ -35,30 +33,27 @@ const DataTableComponent = ({ id }) => {
     useEffect(() => {
         if (id) {
             fetch(`${config.apiUrl}/inventories/${id}`)
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => setItem(data))
-                .catch(error => console.error('Error fetching item:', error));
+                .catch(err => console.error('Error fetching item:', err));
             fetchHistoryData();
         }
 
-        // Cleanup function to destroy the DataTable instance
         return () => {
             if ($.fn.DataTable.isDataTable('#example')) {
                 $('#example').DataTable().clear().destroy();
-                $('#example tbody').off('click', 'button.view-btn'); // Remove event listener on cleanup
+                $('#example tbody').off('click', 'button.view-btn');
             }
         };
     }, [id]);
 
     useEffect(() => {
-        // Ensure DataTable is not initialized multiple times
         if ($.fn.DataTable.isDataTable('#example')) {
             $('#example').DataTable().clear().destroy();
-            $('#example tbody').off('click', 'button.view-btn'); // Remove previous event listener before initializing again
+            $('#example tbody').off('click', 'button.view-btn');
         }
 
         if (historyData && historyData.length > 0) {
-            // Initialize DataTable after the DOM is fully updated
             const table = $('#example').DataTable({
                 paging: true,
                 searching: true,
@@ -72,21 +67,19 @@ const DataTableComponent = ({ id }) => {
                     { data: 'estado' },
                     {
                         data: null,
-                        render: function (data, type, row, meta) {
+                        render: (_, __, row, meta) => {
                             return `<button class="view-btn text-blue-500" data-id="${meta.row}">View</button>`;
-                        },
-                    },
+                        }
+                    }
                 ],
-                destroy: true,
+                destroy: true
             });
 
-            // Attach click event listener for the "View" buttons
             $('#example tbody').on('click', 'button.view-btn', function () {
                 const rowIdx = $(this).data('id');
                 handleView(historyData[rowIdx]);
             });
         } else {
-            // Reinitialize with an empty dataset to avoid issues
             $('#example').DataTable({
                 paging: true,
                 searching: true,
@@ -100,10 +93,8 @@ const DataTableComponent = ({ id }) => {
                     { data: 'estado' },
                     {
                         data: null,
-                        render: function () {
-                            return '<button class="view-btn text-blue-500">View</button>';
-                        },
-                    },
+                        render: () => '<button class="view-btn text-blue-500">View</button>',
+                    }
                 ],
                 destroy: true,
             });
@@ -112,63 +103,63 @@ const DataTableComponent = ({ id }) => {
 
     const newOtm = () => {
         const allClosed = historyData.every(entry => entry.estado.toLowerCase() === 'close');
-
         if (allClosed) {
             setNewotmModalOpen(true);
         } else {
-            alert('Not all items are closed.');
+            alert('Not all OTMs are closed.');
         }
     };
 
-    const handleView = (item) => {
-        // Handle view logic here
-        //console.log(item._id);
-        router.push(`/health/otm/${item._id}`)
+    const handleView = (entry) => {
+        router.push(`/health/otm/${entry._id}`);
     };
 
     return (
-        <div>
+        <div className="space-y-6">
             <NewOtmModal
                 isOpen={newotmModalOpen}
                 onClose={() => setNewotmModalOpen(false)}
                 item={item}
                 fetchHistoryData={fetchHistoryData}
             />
-            <button onClick={newOtm} className="bg-blue-500 text-white p-2 rounded">Add NEWOTM</button>
+
+            <button
+                onClick={newOtm}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+            >
+                ➕ Add NEWOTM
+            </button>
+
             {item && (
-                <>
-                    <h1>Name: {item.name}</h1>
-                    <p>Brand: {item.brand}</p>
-                    <p>Model: {item.model}</p>
-                    <p>Serie: {item.serie}</p>
-                    <p>Location: {item.location}</p>
-                    <p>Sub Location: {item.sub_location}</p>
-                    <p>Codepat: {item.codepat}</p>
-                </>
+                <div className="bg-gray-100 p-4 rounded-md shadow">
+                    <h2 className="text-lg font-semibold mb-2">Device Information</h2>
+                    <div className="text-sm space-y-1">
+                        <p><strong>Name:</strong> {item.name}</p>
+                        <p><strong>Brand:</strong> {item.brand}</p>
+                        <p><strong>Model:</strong> {item.model}</p>
+                        <p><strong>Serie:</strong> {item.serie}</p>
+                        <p><strong>Location:</strong> {item.location}</p>
+                        <p><strong>Sub Location:</strong> {item.sub_location}</p>
+                        <p><strong>Codepat:</strong> {item.codepat}</p>
+                    </div>
+                </div>
             )}
-            <br/>
-            <h2>History</h2>
-            <div className="overflow-x-auto">
-                <table id="example" className="display">
-                    <thead>
-                    <tr>
-                        <th>Fecha de Solicitud</th>
-                        <th>Problema</th>
-                        <th>Estado</th>
-                        <th>Accion</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {historyData && historyData.map((entry, i) => (
-                        <tr key={i}>
-                            <td>{entry.fecha_open}</td>
-                            <td>{entry.problema}</td>
-                            <td>{entry.estado}</td>
-                            <td><button onClick={() => handleView(entry)} className="view-btn text-blue-500">View</button></td>
+
+            <div>
+                <h2 className="text-lg font-semibold mb-2">History</h2>
+                <div className="overflow-x-auto rounded border">
+                    <table id="example" className="display w-full text-sm text-left">
+                        <thead className="bg-gray-100 text-gray-700">
+                        <tr>
+                            <th className="px-4 py-2">Fecha de Solicitud</th>
+                            <th className="px-4 py-2">Problema</th>
+                            <th className="px-4 py-2">Estado</th>
+                            <th className="px-4 py-2">Acción</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody />
+                    </table>
+                </div>
             </div>
         </div>
     );

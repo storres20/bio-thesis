@@ -5,31 +5,34 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 
 /* DataTable */
-// Dynamic Import
 const DataTableComponent = dynamic(
     () => import('@/components/health/DatatableInventoryId/DatatableInventoryId'),
     { ssr: false }
 );
-/************************/
 
 const HealthDetail = ({ params }) => {
-
     const { id } = params;
-
-    /* Router */
     const router = useRouter();
 
     const returnBack = () => {
         router.push('/health');
-    }
+    };
 
     return (
-        <div className="p-8">
-            <h1 className="text-2xl mb-6">Health by ID</h1>
-            <button onClick={returnBack} className="bg-red-500 text-white p-2 rounded">Return back</button>
-            {/* DataTable*/}
-            <DataTableComponent id={id}/>
-        </div>
+        <main className="p-6 max-w-5xl mx-auto">
+            <h1 className="text-2xl font-bold mb-6">Health by ID</h1>
+
+            <button
+                onClick={returnBack}
+                className="mb-6 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+            >
+                ← Return back
+            </button>
+
+            {/* DataTable Component */}
+            <DataTableComponent id={id} />
+        </main>
     );
 };
+
 export default HealthDetail;
